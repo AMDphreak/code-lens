@@ -135,6 +135,7 @@ code-lens.el-appearance-dark {
   display: block;
   white-space: pre;
   line-height: inherit;
+  height: 1lh;
 }
 
 .el-token-kind-keyword { color: var(--el-syntax-keyword); }
@@ -148,7 +149,7 @@ code-lens.el-appearance-dark {
 .el-token-kind-macro { color: var(--el-syntax-macro); }
 .el-token-kind-operator { color: var(--el-syntax-operator); }
 
-/* Slotted tokens — background overlay only; no border/padding so baselines match plain tokens */
+/* Slotted tokens — background overlay on outer shell; morph clip stays inline at rest */
 .el-diff {
   position: relative;
   display: inline;
@@ -170,29 +171,26 @@ code-lens.el-appearance-dark {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--el-diff-border) 55%, transparent);
 }
 
-.el-diff.is-morphing {
+.el-diff-clip {
   display: inline-block;
-  overflow: hidden;
   vertical-align: baseline;
-  max-width: 100%;
+  line-height: inherit;
+  height: 1lh;
+  width: auto;
+}
+
+.el-diff-clip.is-morphing {
+  position: relative;
+  overflow: hidden;
   transition: width var(--el-width-ms) var(--el-width-easing);
 }
 
-.el-diff.is-morphing::before {
+.el-diff-clip.is-morphing .el-diff-layer {
+  position: absolute;
   left: 0;
-  right: 0;
   top: 0;
-  bottom: 0;
-}
-
-.el-diff-text {
-  display: inline-grid;
-  vertical-align: baseline;
-}
-
-.el-diff-text > span {
-  grid-area: 1 / 1;
-  overflow: hidden;
+  height: 1lh;
+  line-height: inherit;
   white-space: nowrap;
 }
 
@@ -399,7 +397,7 @@ code-lens.el-glass-disabled .el-tab[aria-selected="true"] {
     animation: none;
     opacity: 0;
   }
-  .el-diff {
+  .el-diff-clip.is-morphing {
     transition-duration: 0.01ms;
   }
 }

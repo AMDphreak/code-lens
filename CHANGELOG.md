@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4] - 2026-05-29
+
+### Fixed
+
+- **Line height during lens morph** — width morph runs in an inner clip locked to `1lh` with absolutely stacked cross-fade layers; outer highlight stays inline. Settles on width `transitionend` (~420ms) instead of a delayed DOM rebuild.
+- **GitHub Pages CI** — build `@code-lens/css` before the demo (`dist/code-lens.css` is generated, not committed).
+
 ## [0.3.3] - 2026-05-29
 
 ### Fixed

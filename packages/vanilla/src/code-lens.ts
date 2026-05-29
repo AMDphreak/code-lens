@@ -51,6 +51,8 @@ export class CodeLensElement extends HTMLElement {
   #glassEnabled = true;
   #appearanceCleanup: (() => void) | null = null;
   #lastRenderedLensIndex: number | null = null;
+  #morphGeneration = 0;
+  #morphTimers = new Map<string, number>();
 
   #touchPreviewIsSwipe(): boolean {
     return this.#config?.ui.interaction.touch.preview === "swipe";
@@ -310,8 +312,15 @@ export class CodeLensElement extends HTMLElement {
     return span.offsetWidth;
   }
 
+  #clearMorphTimers(): void {
+    for (const id of this.#morphTimers.values()) window.clearTimeout(id);
+    this.#morphTimers.clear();
+  }
+
   #renderCode(): void {
     if (!this.#codeEl || !this.#config) return;
+    this.#morphGeneration++;
+    this.#clearMorphTimers();
     const cfg = this.#config;
     const lensIdx = this.#displayIndex();
     const base = cfg.document.lenses[0].lines;
@@ -380,67 +389,82 @@ export class CodeLensElement extends HTMLElement {
     const shell = document.createElement("span");
     shell.className = "el-diff";
 
-    const ui = this.#config!.ui.animation;
+    const clip = document.createElement("span");
+    clip.className = "el-diff-clip";
 
-    if (state.outgoing === null) {
+    const ui = this.#config!.ui.animation;
+    const gen = this.#morphGeneration;
+
+    const appendToken = (text: string) => {
       const tokenSpan = document.createElement("span");
       tokenSpan.className = `el-token-kind-${token.kind}`;
-      tokenSpan.textContent = state.incoming;
-      shell.appendChild(tokenSpan);
+      tokenSpan.textContent = text;
+      clip.appendChild(tokenSpan);
+    };
+
+    if (state.outgoing === null) {
+      appendToken(state.incoming);
+      shell.appendChild(clip);
       return shell;
     }
 
-    shell.classList.add("is-morphing");
+    clip.classList.add("is-morphing");
 
-    const grid = document.createElement("span");
-    grid.className = "el-diff-text";
-
-    const out = document.createElement("span");
-    out.style.opacity = String(state.outOpacity);
-    out.style.transition = `opacity var(--el-fade-ms) ease-out`;
+    const outLayer = document.createElement("span");
+    outLayer.className = "el-diff-layer";
+    outLayer.style.opacity = String(state.outOpacity);
+    outLayer.style.transition = `opacity var(--el-fade-ms) ease-out`;
     const outSpan = document.createElement("span");
     outSpan.className = `el-token-kind-${token.kind}`;
     outSpan.textContent = state.outgoing;
-    out.appendChild(outSpan);
-    grid.appendChild(out);
+    outLayer.appendChild(outSpan);
 
-    const inn = document.createElement("span");
-    inn.style.opacity = String(state.inOpacity);
-    inn.style.transition = `opacity var(--el-fade-ms) ease-in 60ms`;
+    const inLayer = document.createElement("span");
+    inLayer.className = "el-diff-layer";
+    inLayer.style.opacity = String(state.inOpacity);
+    inLayer.style.transition = `opacity var(--el-fade-ms) ease-in 60ms`;
     const inSpan = document.createElement("span");
     inSpan.className = `el-token-kind-${token.kind}`;
     inSpan.textContent = state.incoming;
-    inn.appendChild(inSpan);
-    grid.appendChild(inn);
+    inLayer.appendChild(inSpan);
 
-    shell.appendChild(grid);
+    clip.append(outLayer, inLayer);
+    shell.appendChild(clip);
 
     const incomingW = this.#measureTextWidth(state.incoming, token.kind);
     const outgoingW = this.#measureTextWidth(state.outgoing, token.kind);
-    const fromW = outgoingW;
-    const toW = incomingW;
 
-    shell.style.width = `${fromW}px`;
+    clip.style.width = `${outgoingW}px`;
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        shell.style.width = `${toW}px`;
-        state!.outOpacity = 0;
-        state!.inOpacity = 1;
-        grid.querySelectorAll(":scope > span").forEach((el, i) => {
-          (el as HTMLElement).style.opacity = i === 0 ? "0" : "1";
-        });
-        window.setTimeout(() => {
-          state!.outgoing = null;
-          shell.classList.remove("is-morphing");
-          shell.style.width = "";
-          shell.replaceChildren();
-          const settled = document.createElement("span");
-          settled.className = `el-token-kind-${token.kind}`;
-          settled.textContent = state!.incoming;
-          shell.appendChild(settled);
-        }, ui.widthMs + ui.fadeMs);
-      });
+      clip.style.width = `${incomingW}px`;
+      state!.outOpacity = 0;
+      state!.inOpacity = 1;
+      outLayer.style.opacity = "0";
+      inLayer.style.opacity = "1";
     });
+
+    const settle = () => {
+      if (gen !== this.#morphGeneration) return;
+      this.#morphTimers.delete(key);
+      state!.outgoing = null;
+      clip.classList.remove("is-morphing");
+      clip.style.width = "";
+      clip.replaceChildren(inSpan.cloneNode(true));
+    };
+
+    const onWidthEnd = (event: TransitionEvent) => {
+      if (event.target !== clip || event.propertyName !== "width") return;
+      clip.removeEventListener("transitionend", onWidthEnd);
+      settle();
+    };
+    clip.addEventListener("transitionend", onWidthEnd);
+    this.#morphTimers.set(
+      key,
+      window.setTimeout(() => {
+        clip.removeEventListener("transitionend", onWidthEnd);
+        settle();
+      }, ui.widthMs + 80),
+    );
 
     return shell;
   }
