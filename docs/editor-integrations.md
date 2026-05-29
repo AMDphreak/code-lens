@@ -14,7 +14,7 @@ That second step is where **AI or LSP + heuristics** enter. The portable spec st
 |------------|-----|-------------|
 | Lens tab bar + preview | `WebviewPanel` + `@code-lens/vanilla` | **High** — reuse web component in sidebar or panel |
 | Highlight “variable” tokens | `TextEditorDecorationType` | **High** — background/border on ranges |
-| Width morph / glass sweep | DOM in webview only | **In panel: high.** Inline in Monaco: **low** — Monaco has no per-token width morph; use decorations + optional ghost text |
+| Slotted cross-fade / glass sweep | DOM in webview only | **In panel: high.** Inline in Monaco: **low** — Monaco has no per-token morph; use decorations + optional ghost text |
 | Swap identifier text in buffer | `WorkspaceEdit` / transient virtual doc | **Medium** — apply edits to a **preview document** or ghost buffer, not silently mutating saved file |
 | Infer roles from semantics | LSP `DocumentSymbol`, Tree-sitter, or **AI** | **Medium–high** — AI best for role-labeled/didactic naming |
 | Hover lens switch | `HoverProvider` + commands | **High** |

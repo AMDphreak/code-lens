@@ -50,6 +50,7 @@ export const SPEC_FILES = [
   "spec/examples/*.json5 — lens-aligned token data",
   "spec/themes.json5 — color schemes (tropical, earth, earthenware, patina, fruits, desert)",
   "spec/ui.json5 — interaction + animation constants",
+  "docs/ai-reproduction-spec.md — LLM porting checklist (slotted morph invariants)",
   "spec/implementations.json5 — registry + glass lens tiers",
 ] as const;
 

@@ -53,6 +53,7 @@ document.body.appendChild(el);
 
 - [Ecosystem / delivery model](docs/ecosystem.md)
 - [Full specification](docs/specification.md)
+- [AI / LLM reproduction spec](docs/ai-reproduction-spec.md) — normative porting detail
 - [Glass lens capabilities](docs/glass-lens-capabilities.md)
 - [Implementation registry](implementations/REGISTRY.md)
 

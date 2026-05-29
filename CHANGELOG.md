@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.12] - 2026-05-29
+
+### Changed
+
+- **Docs** — align `ai-reproduction-spec.md` and `specification.md` with shipped slotted morph (flex baseline lines, inline-block slots, width-only pin, opacity cross-fade, block glass). Document anti-patterns and note that meta copy updates instantly.
+
 ## [0.3.11] - 2026-05-29
 
 ### Fixed

@@ -14,7 +14,7 @@ These are **not tied to a fixed list of frameworks**. Implement them on **any ru
 | **full** | `backdrop-filter` / `-webkit-backdrop-filter` works | Tab pill + block glass sweep (normative in `@code-lens/vanilla`) |
 | **webview** | App embeds a DOM surface | Ship `@code-lens/vanilla` unchanged — Electron, Tauri, WebView2, Qt WebEngine, WebKitGTK |
 | **native** | Platform blur API, no DOM | Reproduce block sweep with layered gradients + blur on the code viewport (SwiftUI Material, Compose `blur`, Flutter `BackdropFilter`, RN blur module) |
-| **fallback** | No blur compositing | Keep width morph + text cross-fade; omit glass overlay |
+| **fallback** | No blur compositing | Keep slotted cross-fade + width pin; omit block glass overlay |
 | **none** | Editor / hint-only integrations | Role labels without inline morph |
 
 Canonical registry rows and expected tiers: [`spec/implementations.json5`](../spec/implementations.json5).
