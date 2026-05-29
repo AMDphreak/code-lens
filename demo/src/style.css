@@ -161,6 +161,6 @@ pre {
   color: var(--muted);
 }
 
-#demo-host lens-code-block {
+#demo-host code-lens {
   display: block;
 }

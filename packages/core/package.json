@@ -1,8 +1,8 @@
 {
-  "name": "@examplens/core",
-  "version": "0.1.0",
+  "name": "@code-lens/core",
+  "version": "0.2.0",
   "type": "module",
-  "description": "Spec loader and shared logic for LensCodeBlock",
+  "description": "Spec loader and shared logic for code-lens",
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

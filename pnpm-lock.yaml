@@ -10,10 +10,10 @@ importers:
 
   demo:
     dependencies:
-      '@examplens/core':
+      '@code-lens/core':
         specifier: workspace:*
         version: link:../packages/core
-      '@examplens/vanilla':
+      '@code-lens/vanilla':
         specifier: workspace:*
         version: link:../packages/vanilla
     devDependencies:
@@ -36,7 +36,7 @@ importers:
 
   packages/solid:
     dependencies:
-      '@examplens/core':
+      '@code-lens/core':
         specifier: workspace:*
         version: link:../core
       solid-js:
@@ -49,7 +49,7 @@ importers:
 
   packages/vanilla:
     dependencies:
-      '@examplens/core':
+      '@code-lens/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:

@@ -77,6 +77,8 @@ export type UiDocument = {
     panelCrossfadeMs: number;
     diffTokenPaddingPx: number;
     diffTokenRadiusPx: number;
+    glassLensPassMs: number;
+    glassLensLineStaggerMs: number;
   };
   layout: {
     tabMinHeightPx: number;

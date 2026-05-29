@@ -9,9 +9,9 @@ import {
   type LensDefinition,
   type ThemesDocument,
   type UiDocument,
-} from "@examplens/core";
+} from "@code-lens/core";
 
-const TAG = "lens-code-block";
+const TAG = "code-lens";
 
 type MorphState = {
   outgoing: string | null;
@@ -21,24 +21,26 @@ type MorphState = {
   widthPx: number | null;
 };
 
-export type LensCodeBlockConfig = {
+export type CodeLensConfig = {
   document: LensBlockDocument;
   themes: ThemesDocument;
   ui: UiDocument;
   themeId?: string;
 };
 
-export class LensCodeBlockElement extends HTMLElement {
+/** @deprecated Use CodeLensConfig */
+export type LensCodeBlockConfig = CodeLensConfig;
+
+export class CodeLensElement extends HTMLElement {
   static observedAttributes = ["theme"];
 
-  #config: LensCodeBlockConfig | null = null;
+  #config: CodeLensConfig | null = null;
   #committed = 0;
   #preview: number | null = null;
   #variableSlots = new Set<string>();
   #morph = new Map<string, MorphState>();
   #glassEl: HTMLDivElement | null = null;
   #toolbarEl: HTMLDivElement | null = null;
-  #bodyEl: HTMLDivElement | null = null;
   #codeEl: HTMLPreElement | null = null;
   #tabButtons: HTMLButtonElement[] = [];
   #touchStartX = 0;
@@ -49,7 +51,7 @@ export class LensCodeBlockElement extends HTMLElement {
     this.#render();
   }
 
-  configure(config: LensCodeBlockConfig): void {
+  configure(config: CodeLensConfig): void {
     this.#config = config;
     this.#variableSlots = collectVariableSlots(config.document.lenses);
     this.#committed = 0;
@@ -83,6 +85,11 @@ export class LensCodeBlockElement extends HTMLElement {
     this.style.setProperty("--el-width-easing", ui.animation.widthEasing);
     this.style.setProperty("--el-fade-ms", `${ui.animation.fadeMs}ms`);
     this.style.setProperty("--el-glass-ms", `${ui.animation.glassSlideMs}ms`);
+    this.style.setProperty("--el-glass-lens-ms", `${ui.animation.glassLensPassMs}ms`);
+    this.style.setProperty(
+      "--el-glass-lens-stagger",
+      `${ui.animation.glassLensLineStaggerMs}ms`,
+    );
     this.style.setProperty("--el-code-font", ui.layout.codeFontFamily);
     this.style.setProperty(
       "--el-swipe-opacity",
@@ -106,7 +113,7 @@ export class LensCodeBlockElement extends HTMLElement {
       this.#preview = null;
       this.#renderMeta();
       this.#renderCode();
-      this.#updateGlass();
+      this.#updateTabGlass();
     });
 
     const glass = document.createElement("div");
@@ -126,27 +133,22 @@ export class LensCodeBlockElement extends HTMLElement {
       btn.className = "el-tab";
       btn.setAttribute("role", "tab");
       btn.textContent = l.label;
-      btn.addEventListener("mouseenter", () => {
+      const select = () => {
         this.#preview = i;
         this.#applyTheme(this.#themeId(), l.id);
         this.#renderMeta();
         this.#renderCode();
-        this.#updateGlass(btn);
-      });
-      btn.addEventListener("focus", () => {
-        this.#preview = i;
-        this.#applyTheme(this.#themeId(), l.id);
-        this.#renderMeta();
-        this.#renderCode();
-        this.#updateGlass(btn);
-      });
+        this.#updateTabGlass(btn);
+      };
+      btn.addEventListener("mouseenter", select);
+      btn.addEventListener("focus", select);
       btn.addEventListener("click", () => {
         this.#committed = i;
         this.#preview = null;
         this.#applyTheme(this.#themeId(), l.id);
         this.#renderMeta();
         this.#renderCode();
-        this.#updateGlass(btn);
+        this.#updateTabGlass(btn);
       });
       toolbar.appendChild(btn);
       return btn;
@@ -163,7 +165,6 @@ export class LensCodeBlockElement extends HTMLElement {
 
     const body = document.createElement("div");
     body.className = "el-body";
-    this.#bodyEl = body;
 
     const sub = document.createElement("p");
     sub.className = "el-meta-sub";
@@ -185,7 +186,6 @@ export class LensCodeBlockElement extends HTMLElement {
 
     const pre = document.createElement("pre");
     pre.className = "el-code";
-    pre.dataset.code = "1";
 
     wrap.appendChild(hint);
     wrap.appendChild(ghost);
@@ -199,7 +199,7 @@ export class LensCodeBlockElement extends HTMLElement {
     const foot = document.createElement("p");
     foot.className = "el-foot";
     foot.textContent =
-      "Hover tabs to preview (desktop) · swipe code (touch) · click/tap to lock · amber = varying tokens";
+      "Hover tabs to preview · glass lens sweeps diff tokens line-by-line · click/tap to lock";
     body.appendChild(foot);
 
     root.appendChild(body);
@@ -208,7 +208,7 @@ export class LensCodeBlockElement extends HTMLElement {
 
     this.#renderMeta();
     this.#renderCode();
-    requestAnimationFrame(() => this.#updateGlass(this.#tabButtons[this.#displayIndex()]));
+    requestAnimationFrame(() => this.#updateTabGlass(this.#tabButtons[this.#displayIndex()]));
   }
 
   #renderMeta(): void {
@@ -236,7 +236,7 @@ export class LensCodeBlockElement extends HTMLElement {
     base.forEach((line, lineIdx) => {
       const row = document.createElement("div");
       row.className = "el-line";
-      line.forEach((baseToken, tokenIdx) => {
+      line.forEach((_baseToken, tokenIdx) => {
         const token = cfg.document.lenses[lensIdx].lines[lineIdx][tokenIdx];
         const highlight = !!token.slot && this.#variableSlots.has(token.slot);
         if (highlight) {
@@ -259,10 +259,12 @@ export class LensCodeBlockElement extends HTMLElement {
   ): HTMLElement {
     const key = this.#slotKey(lineIdx, tokenIdx);
     let state = this.#morph.get(key);
+    const isMorph = state !== undefined && state.incoming !== token.text;
+
     if (!state) {
       state = { outgoing: null, incoming: token.text, outOpacity: 0, inOpacity: 1, widthPx: null };
       this.#morph.set(key, state);
-    } else if (state.incoming !== token.text) {
+    } else if (isMorph) {
       state.outgoing = state.incoming;
       state.incoming = token.text;
       state.outOpacity = 1;
@@ -307,8 +309,26 @@ export class LensCodeBlockElement extends HTMLElement {
     inner.appendChild(grid);
     shell.appendChild(inner);
 
-    const pad = this.#config!.ui.animation.diffTokenPaddingPx;
-    const fromW = state.widthPx ?? (shell.offsetWidth || measure.offsetWidth + pad);
+    const ui = this.#config!.ui.animation;
+    const pad = ui.diffTokenPaddingPx;
+    const staggerMs = ui.glassLensLineStaggerMs;
+    const passMs = ui.glassLensPassMs;
+    const lineDelay = lineIdx * staggerMs;
+
+    if (state.outgoing !== null) {
+      shell.classList.add("is-morphing");
+      const glassLens = document.createElement("span");
+      glassLens.className = "el-diff-glass-lens";
+      glassLens.setAttribute("aria-hidden", "true");
+      glassLens.style.setProperty("--el-glass-lens-delay", `${lineDelay}ms`);
+      shell.appendChild(glassLens);
+      window.setTimeout(
+        () => shell.classList.remove("is-morphing"),
+        lineDelay + passMs + 80,
+      );
+    }
+
+    const fromW = state.widthPx ?? measure.offsetWidth + pad;
     const toW = measure.offsetWidth + pad;
 
     shell.style.width = `${fromW}px`;
@@ -321,10 +341,10 @@ export class LensCodeBlockElement extends HTMLElement {
           grid.querySelectorAll(":scope > span").forEach((el, i) => {
             (el as HTMLElement).style.opacity = i === 0 && state!.outgoing ? "0" : "1";
           });
-          setTimeout(() => {
+          window.setTimeout(() => {
             state!.outgoing = null;
             state!.widthPx = toW;
-          }, this.#config!.ui.animation.widthMs + this.#config!.ui.animation.fadeMs);
+          }, ui.widthMs + ui.fadeMs);
         } else {
           state!.widthPx = toW;
         }
@@ -334,7 +354,7 @@ export class LensCodeBlockElement extends HTMLElement {
     return shell;
   }
 
-  #updateGlass(btn?: HTMLButtonElement): void {
+  #updateTabGlass(btn?: HTMLButtonElement): void {
     if (!this.#glassEl || !this.#toolbarEl) return;
     const target = btn ?? this.#tabButtons[this.#displayIndex()];
     if (!target) return;
@@ -378,7 +398,7 @@ export class LensCodeBlockElement extends HTMLElement {
           this.#applyTheme(this.#themeId(), lens.id);
           this.#renderMeta();
           this.#renderCode();
-          this.#updateGlass(this.#tabButtons[next]);
+          this.#updateTabGlass(this.#tabButtons[next]);
         }
       },
       { passive: true },
@@ -397,31 +417,27 @@ export class LensCodeBlockElement extends HTMLElement {
   }
 }
 
-export function registerLensCodeBlock(): void {
+export function registerCodeLens(): void {
   if (!customElements.get(TAG)) {
-    customElements.define(TAG, LensCodeBlockElement);
+    customElements.define(TAG, CodeLensElement);
   }
 }
 
-export function createLensCodeBlock(
-  config: LensCodeBlockConfig,
-  themeId?: string,
-): LensCodeBlockElement {
-  registerLensCodeBlock();
-  const el = document.createElement(TAG) as LensCodeBlockElement;
+export function createCodeLens(config: CodeLensConfig, themeId?: string): CodeLensElement {
+  registerCodeLens();
+  const el = document.createElement(TAG) as CodeLensElement;
   if (themeId) el.setAttribute("theme", themeId);
   el.configure(config);
   return el;
 }
 
-/** Load spec files (JSON5 strings) into a configured element. */
 export function mountFromSpec(
   host: HTMLElement,
   blockSource: string,
   themesSource: string,
   uiSource: string,
-): LensCodeBlockElement {
-  const el = createLensCodeBlock({
+): CodeLensElement {
+  const el = createCodeLens({
     document: parseLensBlock(blockSource),
     themes: parseThemes(themesSource),
     ui: parseUi(uiSource),
@@ -429,5 +445,12 @@ export function mountFromSpec(
   host.appendChild(el);
   return el;
 }
+
+/** @deprecated Use registerCodeLens */
+export const registerLensCodeBlock = registerCodeLens;
+/** @deprecated Use createCodeLens */
+export const createLensCodeBlock = createCodeLens;
+/** @deprecated Use CodeLensElement */
+export type LensCodeBlockElement = CodeLensElement;
 
 export { lensIndexById };

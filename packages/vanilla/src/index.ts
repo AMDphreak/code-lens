@@ -1,20 +1,27 @@
-import { registerLensCodeBlock } from "./lens-code-block.js";
+import { registerCodeLens } from "./code-lens.js";
 
 export {
+  CodeLensElement,
+  createCodeLens,
   createLensCodeBlock,
   LensCodeBlockElement,
   mountFromSpec,
+  registerCodeLens,
   registerLensCodeBlock,
+  type CodeLensConfig,
   type LensCodeBlockConfig,
-} from "./lens-code-block.js";
+} from "./code-lens.js";
 
-export function injectLensCodeBlockStyles(doc: Document = document): void {
-  if (doc.getElementById("examplens-styles")) return;
+export function injectCodeLensStyles(doc: Document = document): void {
+  if (doc.getElementById("code-lens-styles")) return;
   const link = doc.createElement("link");
-  link.id = "examplens-styles";
+  link.id = "code-lens-styles";
   link.rel = "stylesheet";
-  link.href = new URL("./lens-code-block.css", import.meta.url).href;
+  link.href = new URL("./code-lens.css", import.meta.url).href;
   doc.head.appendChild(link);
 }
 
-export default registerLensCodeBlock;
+/** @deprecated Use injectCodeLensStyles */
+export const injectLensCodeBlockStyles = injectCodeLensStyles;
+
+export default registerCodeLens;

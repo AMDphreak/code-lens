@@ -1,13 +1,13 @@
 {
-  "name": "code-example-lenses",
+  "name": "code-lens",
   "private": true,
-  "version": "0.1.0",
-  "description": "Multi-lens code block — one snippet, multiple pedagogical naming conventions",
+  "version": "0.2.0",
+  "description": "code-lens — one snippet, multiple pedagogical naming conventions",
   "license": "MIT",
   "packageManager": "pnpm@10.29.1",
   "scripts": {
     "build": "pnpm -r run build",
-    "dev": "pnpm --filter @examplens/demo dev",
-    "demo:build": "pnpm --filter @examplens/demo build"
+    "dev": "pnpm --filter @code-lens/demo dev",
+    "demo:build": "pnpm --filter @code-lens/demo build"
   }
 }

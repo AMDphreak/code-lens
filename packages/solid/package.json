@@ -1,8 +1,8 @@
 {
-  "name": "@examplens/solid",
-  "version": "0.1.0",
+  "name": "@code-lens/solid",
+  "version": "0.2.0",
   "type": "module",
-  "description": "SolidJS LensCodeBlock (work in progress)",
+  "description": "SolidJS code-lens (work in progress)",
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,7 +10,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@examplens/core": "workspace:*",
+    "@code-lens/core": "workspace:*",
     "solid-js": "^1.9.9"
   },
   "devDependencies": {

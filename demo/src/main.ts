@@ -1,18 +1,13 @@
-import { listThemeIds, parseLensBlock, parseThemes, parseUi } from "@examplens/core";
-import {
-  createLensCodeBlock,
-  injectLensCodeBlockStyles,
-  registerLensCodeBlock,
-} from "@examplens/vanilla";
+import { listThemeIds, parseLensBlock, parseThemes, parseUi } from "@code-lens/core";
+import { createCodeLens, registerCodeLens } from "@code-lens/vanilla";
 import blockSource from "../../spec/examples/zig-namespace.json5?raw";
 import themesSource from "../../spec/themes.json5?raw";
 import uiSource from "../../spec/ui.json5?raw";
 import aiPreview from "../../docs/ai-reproduction-spec.md?raw";
 
-import "../../packages/vanilla/src/lens-code-block.css";
+import "../../packages/vanilla/src/code-lens.css";
 
-injectLensCodeBlockStyles();
-registerLensCodeBlock();
+registerCodeLens();
 
 const themes = parseThemes(themesSource);
 const ui = parseUi(uiSource);
@@ -21,7 +16,7 @@ const document_ = parseLensBlock(blockSource);
 const host = document.getElementById("demo-host")!;
 const themeSelect = document.getElementById("theme-select") as HTMLSelectElement;
 
-const block = createLensCodeBlock(
+const block = createCodeLens(
   { document: document_, themes, ui, themeId: themes.defaultTheme },
   themes.defaultTheme,
 );
@@ -40,22 +35,22 @@ themeSelect.addEventListener("change", () => {
 });
 
 const implementations = [
-  { platform: "Web", name: "Vanilla JS (web component)", pkg: "@examplens/vanilla", status: "shipped" },
-  { platform: "Web", name: "SolidJS", pkg: "@examplens/solid", status: "wip" },
-  { platform: "Web", name: "React", pkg: "@examplens/react", status: "planned" },
-  { platform: "Web", name: "Vue", pkg: "@examplens/vue", status: "planned" },
-  { platform: "Web", name: "Svelte", pkg: "@examplens/svelte", status: "planned" },
-  { platform: "Web", name: "Angular", pkg: "@examplens/angular", status: "planned" },
-  { platform: "Web", name: "Preact", pkg: "@examplens/preact", status: "planned" },
-  { platform: "Web", name: "Lit", pkg: "@examplens/lit", status: "planned" },
+  { platform: "Web", name: "Vanilla JS (<code-lens>)", pkg: "@code-lens/vanilla", status: "shipped" },
+  { platform: "Web", name: "SolidJS", pkg: "@code-lens/solid", status: "wip" },
+  { platform: "Web", name: "React", pkg: "@code-lens/react", status: "planned" },
+  { platform: "Web", name: "Vue", pkg: "@code-lens/vue", status: "planned" },
+  { platform: "Web", name: "Svelte", pkg: "@code-lens/svelte", status: "planned" },
+  { platform: "Web", name: "Angular", pkg: "@code-lens/angular", status: "planned" },
+  { platform: "Web", name: "Preact", pkg: "@code-lens/preact", status: "planned" },
+  { platform: "Web", name: "Lit", pkg: "@code-lens/lit", status: "planned" },
   { platform: "Desktop", name: "Tauri + webview", pkg: "examples/tauri", status: "planned" },
   { platform: "Desktop", name: "Electron", pkg: "examples/electron", status: "planned" },
   { platform: "Desktop", name: "Qt (QML)", pkg: "implementations/qt", status: "planned" },
   { platform: "Desktop", name: "GTK 4", pkg: "implementations/gtk", status: "planned" },
-  { platform: "Mobile", name: "React Native", pkg: "@examplens/react-native", status: "planned" },
+  { platform: "Mobile", name: "React Native", pkg: "@code-lens/react-native", status: "planned" },
   { platform: "Mobile", name: "SwiftUI", pkg: "implementations/swiftui", status: "planned" },
   { platform: "Mobile", name: "Jetpack Compose", pkg: "implementations/compose", status: "planned" },
-  { platform: "Mobile", name: "Flutter", pkg: "@examplens/flutter", status: "planned" },
+  { platform: "Mobile", name: "Flutter", pkg: "@code-lens/flutter", status: "planned" },
 ];
 
 const implHost = document.getElementById("impl-table")!;

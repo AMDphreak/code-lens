@@ -1,6 +1,6 @@
-# AI / LLM Reproduction Spec — LensCodeBlock
+# AI / LLM Reproduction Spec — code-lens
 
-Use this document to implement **LensCodeBlock** in any UI framework or toolkit. Follow normative MUST/SHOULD language.
+Use this document to implement **code-lens** in any UI framework or toolkit. Follow normative MUST/SHOULD language.
 
 ## Product definition
 
@@ -74,6 +74,17 @@ For each slotted token when text changes:
 5. Cross-fade text: outgoing span opacity 1→0 (220ms), incoming 0→1 (220ms, 60ms delay).
 6. Stack outgoing/incoming in CSS grid same cell so width animation doesn't spill glyphs.
 
+### Literal glass lens over diff tokens (required for web)
+
+Simultaneously with steps 3–5, render a **glassmorphism lens** element inside each morphing diff shell:
+
+- Pill-shaped overlay (~62% width of token), `border-radius: 999px`.
+- `backdrop-filter: blur(11px) saturate(1.35)`, semi-transparent white gradient, subtle border.
+- Animate **translateX** from `-115%` → `+115%` over `glassLensPassMs` (520ms default).
+- **Stagger by line**: `animation-delay = lineIndex × glassLensLineStaggerMs` (55ms default). Line 0 starts immediately; each subsequent code line's diff tokens start later.
+- Runs in parallel with width morph and text cross-fade — all three must be visible together.
+- Honor `prefers-reduced-motion`: hide glass lens, shorten width transition.
+
 Non-slotted tokens: swap text instantly, syntax color by `kind`.
 
 ## Syntax colors
@@ -85,12 +96,10 @@ Kinds: keyword, type, identifier, string, comment, punctuation, number, builtin,
 ## API surface (web reference)
 
 ```js
-// Vanilla
-import { createLensCodeBlock, registerLensCodeBlock } from "@examplens/vanilla";
-registerLensCodeBlock();
-const el = createLensCodeBlock({ document, themes, ui }, "earth");
+import { createCodeLens, registerCodeLens } from "@code-lens/vanilla";
+registerCodeLens();
+const el = createCodeLens({ document, themes, ui }, "earth");
 host.appendChild(el);
-el.setAttribute("theme", "tropical"); // runtime theme switch
 ```
 
 Other frameworks: wrap the same state machine — `committedLensIndex`, `previewLensIndex`, `themeId`, morph map keyed by `line:token`.
@@ -114,8 +123,8 @@ onTouchEnd(): committedIndex = displayIndex; previewIndex = null
 
 ## Reference implementation
 
-- `@examplens/core` — parsing and themes
-- `@examplens/vanilla` — `<lens-code-block>` custom element
+- `@code-lens/core` — parsing and themes
+- `@code-lens/vanilla` — `<code-lens>` custom element
 - Live demo: GitHub Pages site in `/demo`
 
 ## Acceptance checklist
@@ -127,5 +136,5 @@ onTouchEnd(): committedIndex = displayIndex; previewIndex = null
 - [ ] Hover preview + click commit on desktop
 - [ ] Swipe on touch
 - [ ] Glass pill tracks active/hovered tab
-- [ ] Diff tokens animate width + cross-fade with clipping
+- [ ] Diff tokens animate width + cross-fade + **glass lens sweep** with per-line stagger
 - [ ] Loads JSON5 spec without hardcoding example text

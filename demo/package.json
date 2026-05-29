@@ -1,7 +1,7 @@
 {
-  "name": "@examplens/demo",
+  "name": "@code-lens/demo",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@examplens/core": "workspace:*",
-    "@examplens/vanilla": "workspace:*"
+    "@code-lens/core": "workspace:*",
+    "@code-lens/vanilla": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

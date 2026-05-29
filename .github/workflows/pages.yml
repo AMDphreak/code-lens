@@ -25,9 +25,9 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install
-      - run: pnpm --filter @examplens/core build
-      - run: pnpm --filter @examplens/vanilla build
-      - run: pnpm --filter @examplens/demo build
+      - run: pnpm --filter @code-lens/core build
+      - run: pnpm --filter @code-lens/vanilla build
+      - run: pnpm --filter @code-lens/demo build
       - uses: actions/upload-pages-artifact@v3
         with:
           path: demo/dist

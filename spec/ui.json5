@@ -3,26 +3,29 @@
   version: 1,
   interaction: {
     desktop: {
-      preview: "hover", // lens tabs: preview on pointer enter
-      commit: "click", // click tab to lock selection
-      keyboard: true, // arrow keys cycle lenses when toolbar focused
+      preview: "hover",
+      commit: "click",
+      keyboard: true,
     },
     touch: {
-      preview: "swipe", // horizontal drag on code panel (before/after reveal style)
-      commit: "tap", // tap tab to lock
+      preview: "swipe",
+      commit: "tap",
       swipeThresholdPx: 48,
-      swipeRevealOpacity: 0.35, // ghost of adjacent lens during drag
+      swipeRevealOpacity: 0.35,
     },
   },
   animation: {
     widthMs: 420,
-    widthEasing: "cubic-bezier(0.16, 1, 0.3, 1)", // log-like ease-out
+    widthEasing: "cubic-bezier(0.16, 1, 0.3, 1)",
     fadeMs: 220,
     fadeDelayMs: 60,
     glassSlideMs: 320,
     panelCrossfadeMs: 200,
     diffTokenPaddingPx: 4,
     diffTokenRadiusPx: 3,
+    // Literal glass lens sweep over each diff token during morph
+    glassLensPassMs: 520,
+    glassLensLineStaggerMs: 55,
   },
   layout: {
     tabMinHeightPx: 28,
