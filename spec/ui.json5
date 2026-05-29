@@ -21,7 +21,7 @@
     fadeDelayMs: 60,
     glassSlideMs: 320,
     panelCrossfadeMs: 200,
-    diffTokenPaddingPx: 4,
+    diffTokenPaddingPx: 2,
     diffTokenRadiusPx: 3,
     // Block-wide glass pass when switching lenses (single layer over code panel)
     glassBlockPassMs: 520,

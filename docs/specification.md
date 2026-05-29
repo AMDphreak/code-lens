@@ -29,9 +29,10 @@ Version 0.2 — portable across web, desktop, and mobile implementations.
 
 ### Diff token morph
 
-- Width transition: `widthMs` + `widthEasing`
+- Inline background highlight via `::before` overlay (no border box — keeps baselines aligned with plain tokens)
+- Width transition (morph only): `widthMs` + `widthEasing`
 - Text cross-fade: `fadeMs` / `fadeDelayMs`
-- Inner clip: `overflow: hidden`
+- Clip during morph: `overflow: hidden` on `inline-block` shell
 
 ### Block glass overlay (when supported)
 

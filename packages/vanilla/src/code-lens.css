@@ -148,24 +148,41 @@ code-lens.el-appearance-dark {
 .el-token-kind-macro { color: var(--el-syntax-macro); }
 .el-token-kind-operator { color: var(--el-syntax-operator); }
 
+/* Slotted tokens — background overlay only; no border/padding so baselines match plain tokens */
 .el-diff {
   position: relative;
-  display: inline-block;
+  display: inline;
   vertical-align: baseline;
   line-height: inherit;
-  max-width: 100%;
-  overflow: hidden;
   isolation: isolate;
-  border-radius: 3px;
-  border: 1px solid var(--el-diff-border);
+}
+
+.el-diff::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: calc(-1 * var(--el-diff-pad-x, 2px));
+  right: calc(-1 * var(--el-diff-pad-x, 2px));
+  top: 0.06em;
+  bottom: 0.06em;
+  border-radius: var(--el-diff-radius, 3px);
   background: var(--el-diff-bg);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--el-diff-border) 55%, transparent);
+}
+
+.el-diff.is-morphing {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: baseline;
+  max-width: 100%;
   transition: width var(--el-width-ms) var(--el-width-easing);
 }
 
-.el-diff-inner {
-  display: inline;
-  vertical-align: baseline;
-  padding: 0 2px;
+.el-diff.is-morphing::before {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }
 
 .el-diff-text {

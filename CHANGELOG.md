@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.3] - 2026-05-29
+
+### Fixed
+
+- **Slotted token alignment** — diff highlights use a `::before` background overlay (no border box or inner padding). Fixed pixel widths apply only during width morph; at rest tokens flow inline like plain syntax.
+
 ## [0.3.2] - 2026-05-29
 
 ### Fixed

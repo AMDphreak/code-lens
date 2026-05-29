@@ -34,7 +34,7 @@ Compute variable slots: any `slot` whose `text` differs across lenses.
 │ subtitle + description                          │
 │ ┌─ code surface (chrome.codeSurface) ─────────┐ │
 │ │ syntax-highlighted lines                    │ │
-│ │ slotted tokens in rounded diff boxes        │ │
+│ │ slotted tokens with inline diff highlights  │ │
 │ └─────────────────────────────────────────────┘ │
 │ footnote hint                                   │
 └─────────────────────────────────────────────────┘
@@ -44,7 +44,7 @@ Compute variable slots: any `slot` whose `text` differs across lenses.
 
 - When lens `L` is active, set panel background to `themes[themeId].lenses[L].panel`.
 - Each of the four lenses MUST use a **different** panel color within a theme.
-- Diff boxes use `diff` background + `diffBorder` border for the active lens.
+- Diff highlights use `diff` background behind text via a `::before` overlay (no border box — keeps baselines aligned).
 - Expose six themes: tropical, earth, earthenware, patina, fruits, desert.
 
 ## Interaction
@@ -68,12 +68,12 @@ Optional legacy mode: `touch.preview: "swipe"` enables horizontal swipe on the c
 
 For each slotted token when text changes:
 
-1. Measure old and new glyph width in monospace at 13px.
-2. Outer shell: `display: inline-block; overflow: hidden; border-radius: 3px; border; background`.
-3. Animate shell **width** from old→new over 420ms with ease-out curve `cubic-bezier(0.16, 1, 0.3, 1)`.
-4. Inner clip: `overflow: hidden; padding: 0 2px`.
-5. Cross-fade text: outgoing span opacity 1→0 (220ms), incoming 0→1 (220ms, 60ms delay).
-6. Stack outgoing/incoming in CSS grid same cell so width animation doesn't spill glyphs.
+1. Measure old and new glyph width in monospace at 13px (include token `kind` styles, e.g. italic comments).
+2. At rest: inline span with a `::before` background overlay — **no border, no padding, no fixed width**.
+3. During morph only: switch to `inline-block` + `overflow: hidden` and animate **width** old→new over 420ms (`cubic-bezier(0.16, 1, 0.3, 1)`).
+4. Cross-fade text: outgoing span opacity 1→0 (220ms), incoming 0→1 (220ms, 60ms delay).
+5. Stack outgoing/incoming in CSS grid same cell so width animation doesn't spill glyphs.
+6. After morph completes, remove fixed width and return to inline overlay.
 
 ### Block glass overlay (when blur compositing is available)
 

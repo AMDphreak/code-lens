@@ -21,7 +21,6 @@ type MorphState = {
   incoming: string;
   outOpacity: number;
   inOpacity: number;
-  widthPx: number | null;
 };
 
 export type CodeLensConfig = {
@@ -138,6 +137,8 @@ export class CodeLensElement extends HTMLElement {
       "--el-swipe-opacity",
       String(this.#config!.ui.interaction.touch.swipeRevealOpacity),
     );
+    this.style.setProperty("--el-diff-pad-x", `${ui.animation.diffTokenPaddingPx}px`);
+    this.style.setProperty("--el-diff-radius", `${ui.animation.diffTokenRadiusPx}px`);
   }
 
   #render(): void {
@@ -289,8 +290,8 @@ export class CodeLensElement extends HTMLElement {
     return `${lineIdx}:${tokenIdx}`;
   }
 
-  /** Measure monospace glyph width using the live code panel (not inside a clipped diff shell). */
-  #measureTextWidth(text: string): number {
+  /** Measure glyph width using the live code panel (same font + token kind as rendered text). */
+  #measureTextWidth(text: string, kind: string): number {
     if (!this.#codeEl || !text) return 0;
     if (!this.#textProbe) {
       this.#textProbe = document.createElement("span");
@@ -299,15 +300,14 @@ export class CodeLensElement extends HTMLElement {
         "position:absolute;visibility:hidden;white-space:pre;pointer-events:none;top:0;left:0;height:auto;width:auto;overflow:visible";
       this.#codeEl.appendChild(this.#textProbe);
     }
-    this.#textProbe.textContent = text;
+    this.#textProbe.replaceChildren();
+    const span = document.createElement("span");
+    span.className = `el-token-kind-${kind}`;
+    span.textContent = text;
+    this.#textProbe.appendChild(span);
     const codeStyle = getComputedStyle(this.#codeEl);
     this.#textProbe.style.font = codeStyle.font;
-    return this.#textProbe.offsetWidth;
-  }
-
-  #diffTokenWidth(text: string): number {
-    const pad = this.#config!.ui.animation.diffTokenPaddingPx;
-    return this.#measureTextWidth(text) + pad;
+    return span.offsetWidth;
   }
 
   #renderCode(): void {
@@ -368,7 +368,7 @@ export class CodeLensElement extends HTMLElement {
     const isMorph = state !== undefined && state.incoming !== token.text;
 
     if (!state) {
-      state = { outgoing: null, incoming: token.text, outOpacity: 0, inOpacity: 1, widthPx: null };
+      state = { outgoing: null, incoming: token.text, outOpacity: 0, inOpacity: 1 };
       this.#morph.set(key, state);
     } else if (isMorph) {
       state.outgoing = state.incoming;
@@ -380,22 +380,29 @@ export class CodeLensElement extends HTMLElement {
     const shell = document.createElement("span");
     shell.className = "el-diff";
 
-    const inner = document.createElement("span");
-    inner.className = "el-diff-inner";
+    const ui = this.#config!.ui.animation;
+
+    if (state.outgoing === null) {
+      const tokenSpan = document.createElement("span");
+      tokenSpan.className = `el-token-kind-${token.kind}`;
+      tokenSpan.textContent = state.incoming;
+      shell.appendChild(tokenSpan);
+      return shell;
+    }
+
+    shell.classList.add("is-morphing");
 
     const grid = document.createElement("span");
     grid.className = "el-diff-text";
 
-    if (state.outgoing !== null) {
-      const out = document.createElement("span");
-      out.style.opacity = String(state.outOpacity);
-      out.style.transition = `opacity var(--el-fade-ms) ease-out`;
-      const outSpan = document.createElement("span");
-      outSpan.className = `el-token-kind-${token.kind}`;
-      outSpan.textContent = state.outgoing;
-      out.appendChild(outSpan);
-      grid.appendChild(out);
-    }
+    const out = document.createElement("span");
+    out.style.opacity = String(state.outOpacity);
+    out.style.transition = `opacity var(--el-fade-ms) ease-out`;
+    const outSpan = document.createElement("span");
+    outSpan.className = `el-token-kind-${token.kind}`;
+    outSpan.textContent = state.outgoing;
+    out.appendChild(outSpan);
+    grid.appendChild(out);
 
     const inn = document.createElement("span");
     inn.style.opacity = String(state.inOpacity);
@@ -406,43 +413,32 @@ export class CodeLensElement extends HTMLElement {
     inn.appendChild(inSpan);
     grid.appendChild(inn);
 
-    inner.appendChild(grid);
-    shell.appendChild(inner);
+    shell.appendChild(grid);
 
-    const ui = this.#config!.ui.animation;
-
-    const incomingW = this.#diffTokenWidth(state.incoming);
-    const outgoingW = state.outgoing ? this.#diffTokenWidth(state.outgoing) : incomingW;
-    const storedW =
-      state.widthPx !== null && state.widthPx >= Math.min(incomingW, outgoingW)
-        ? state.widthPx
-        : null;
-
-    if (state.outgoing !== null) {
-      shell.classList.add("is-morphing");
-      window.setTimeout(() => shell.classList.remove("is-morphing"), ui.widthMs + ui.fadeMs + 80);
-    }
-
-    const fromW = state.outgoing !== null ? (storedW ?? outgoingW) : incomingW;
+    const incomingW = this.#measureTextWidth(state.incoming, token.kind);
+    const outgoingW = this.#measureTextWidth(state.outgoing, token.kind);
+    const fromW = outgoingW;
     const toW = incomingW;
 
     shell.style.width = `${fromW}px`;
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         shell.style.width = `${toW}px`;
-        if (state!.outgoing !== null) {
-          state!.outOpacity = 0;
-          state!.inOpacity = 1;
-          grid.querySelectorAll(":scope > span").forEach((el, i) => {
-            (el as HTMLElement).style.opacity = i === 0 && state!.outgoing ? "0" : "1";
-          });
-          window.setTimeout(() => {
-            state!.outgoing = null;
-            state!.widthPx = toW;
-          }, ui.widthMs + ui.fadeMs);
-        } else {
-          state!.widthPx = toW;
-        }
+        state!.outOpacity = 0;
+        state!.inOpacity = 1;
+        grid.querySelectorAll(":scope > span").forEach((el, i) => {
+          (el as HTMLElement).style.opacity = i === 0 ? "0" : "1";
+        });
+        window.setTimeout(() => {
+          state!.outgoing = null;
+          shell.classList.remove("is-morphing");
+          shell.style.width = "";
+          shell.replaceChildren();
+          const settled = document.createElement("span");
+          settled.className = `el-token-kind-${token.kind}`;
+          settled.textContent = state!.incoming;
+          shell.appendChild(settled);
+        }, ui.widthMs + ui.fadeMs);
       });
     });
 
