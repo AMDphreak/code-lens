@@ -29,10 +29,9 @@ Version 0.2 — portable across web, desktop, and mobile implementations.
 
 ### Diff token morph
 
-- Inline background highlight via `::before` overlay (no border box — keeps baselines aligned with plain tokens)
-- Width transition (morph only): `widthMs` + `widthEasing`
-- Text cross-fade: `fadeMs` / `fadeDelayMs`
-- Clip during morph: `overflow: hidden` on `inline-block` shell
+- At rest: plain inline span (`.el-slot`) — no highlight box
+- On lens change: opacity cross-fade via stacked `inline-grid` layers + per-token gradient sheen
+- Block glass overlay on the code panel runs in parallel (`glassBlockPassMs`)
 
 ### Block glass overlay (when supported)
 

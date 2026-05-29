@@ -46,7 +46,6 @@ export class CodeLensElement extends HTMLElement {
   #toolbarEl: HTMLDivElement | null = null;
   #codeEl: HTMLPreElement | null = null;
   #codeGlassEl: HTMLDivElement | null = null;
-  #textProbe: HTMLSpanElement | null = null;
   #tabButtons: HTMLButtonElement[] = [];
   #glassEnabled = true;
   #appearanceCleanup: (() => void) | null = null;
@@ -139,8 +138,6 @@ export class CodeLensElement extends HTMLElement {
       "--el-swipe-opacity",
       String(this.#config!.ui.interaction.touch.swipeRevealOpacity),
     );
-    this.style.setProperty("--el-diff-pad-x", `${ui.animation.diffTokenPaddingPx}px`);
-    this.style.setProperty("--el-diff-radius", `${ui.animation.diffTokenRadiusPx}px`);
   }
 
   #render(): void {
@@ -292,26 +289,6 @@ export class CodeLensElement extends HTMLElement {
     return `${lineIdx}:${tokenIdx}`;
   }
 
-  /** Measure glyph width using the live code panel (same font + token kind as rendered text). */
-  #measureTextWidth(text: string, kind: string): number {
-    if (!this.#codeEl || !text) return 0;
-    if (!this.#textProbe) {
-      this.#textProbe = document.createElement("span");
-      this.#textProbe.setAttribute("aria-hidden", "true");
-      this.#textProbe.style.cssText =
-        "position:absolute;visibility:hidden;white-space:pre;pointer-events:none;top:0;left:0;height:auto;width:auto;overflow:visible";
-      this.#codeEl.appendChild(this.#textProbe);
-    }
-    this.#textProbe.replaceChildren();
-    const span = document.createElement("span");
-    span.className = `el-token-kind-${kind}`;
-    span.textContent = text;
-    this.#textProbe.appendChild(span);
-    const codeStyle = getComputedStyle(this.#codeEl);
-    this.#textProbe.style.font = codeStyle.font;
-    return span.offsetWidth;
-  }
-
   #clearMorphTimers(): void {
     for (const id of this.#morphTimers.values()) window.clearTimeout(id);
     this.#morphTimers.clear();
@@ -327,10 +304,8 @@ export class CodeLensElement extends HTMLElement {
     const lensChanged =
       this.#lastRenderedLensIndex !== null && this.#lastRenderedLensIndex !== lensIdx;
 
-    const probe = this.#textProbe;
     const glass = this.#codeGlassEl;
     this.#codeEl.innerHTML = "";
-    if (probe) this.#codeEl.appendChild(probe);
     if (glass) this.#codeEl.appendChild(glass);
 
     base.forEach((line, lineIdx) => {
@@ -386,92 +361,53 @@ export class CodeLensElement extends HTMLElement {
       state.inOpacity = 0;
     }
 
-    const shell = document.createElement("span");
-    shell.className = "el-diff";
-
-    const clip = document.createElement("span");
-    clip.className = "el-diff-clip";
-
     const ui = this.#config!.ui.animation;
     const gen = this.#morphGeneration;
 
-    const appendToken = (text: string) => {
-      const tokenSpan = document.createElement("span");
-      tokenSpan.className = `el-token-kind-${token.kind}`;
-      tokenSpan.textContent = text;
-      clip.appendChild(tokenSpan);
-    };
-
     if (state.outgoing === null) {
-      appendToken(state.incoming);
-      shell.appendChild(clip);
-      return shell;
+      const span = document.createElement("span");
+      span.className = `el-slot el-token-kind-${token.kind}`;
+      span.textContent = state.incoming;
+      return span;
     }
 
-    clip.classList.add("is-morphing");
+    const shell = document.createElement("span");
+    shell.className = "el-slot is-morphing";
 
-    const sizing = document.createElement("span");
-    sizing.className = `el-diff-sizing el-token-kind-${token.kind}`;
-    sizing.setAttribute("aria-hidden", "true");
-    sizing.textContent = state.outgoing;
+    const stack = document.createElement("span");
+    stack.className = "el-slot-stack";
 
-    const outLayer = document.createElement("span");
-    outLayer.className = "el-diff-layer";
-    outLayer.style.opacity = String(state.outOpacity);
-    outLayer.style.transition = `opacity var(--el-fade-ms) ease-out`;
     const outSpan = document.createElement("span");
-    outSpan.className = `el-token-kind-${token.kind}`;
+    outSpan.className = `el-slot-layer el-token-kind-${token.kind}`;
     outSpan.textContent = state.outgoing;
-    outLayer.appendChild(outSpan);
+    outSpan.style.opacity = String(state.outOpacity);
+    outSpan.style.transition = `opacity var(--el-fade-ms) ease-out`;
 
-    const inLayer = document.createElement("span");
-    inLayer.className = "el-diff-layer";
-    inLayer.style.opacity = String(state.inOpacity);
-    inLayer.style.transition = `opacity var(--el-fade-ms) ease-in 60ms`;
     const inSpan = document.createElement("span");
-    inSpan.className = `el-token-kind-${token.kind}`;
+    inSpan.className = `el-slot-layer el-token-kind-${token.kind}`;
     inSpan.textContent = state.incoming;
-    inLayer.appendChild(inSpan);
+    inSpan.style.opacity = String(state.inOpacity);
+    inSpan.style.transition = `opacity var(--el-fade-ms) ease-in ${ui.fadeDelayMs}ms`;
 
-    clip.append(sizing, outLayer, inLayer);
-    shell.appendChild(clip);
+    stack.append(outSpan, inSpan);
+    shell.appendChild(stack);
 
-    const incomingW = this.#measureTextWidth(state.incoming, token.kind);
-    const outgoingW = this.#measureTextWidth(state.outgoing, token.kind);
-
-    clip.style.width = `${outgoingW}px`;
     requestAnimationFrame(() => {
-      clip.style.width = `${incomingW}px`;
-      state!.outOpacity = 0;
-      state!.inOpacity = 1;
-      outLayer.style.opacity = "0";
-      inLayer.style.opacity = "1";
+      outSpan.style.opacity = "0";
+      inSpan.style.opacity = "1";
     });
 
     const settle = () => {
       if (gen !== this.#morphGeneration) return;
       this.#morphTimers.delete(key);
       state!.outgoing = null;
-      clip.classList.remove("is-morphing");
-      clip.style.width = "";
-      inLayer.style.opacity = "";
-      inLayer.style.transition = "";
-      inLayer.style.position = "";
-      clip.replaceChildren(inSpan.cloneNode(true));
+      shell.className = `el-slot el-token-kind-${token.kind}`;
+      shell.textContent = state!.incoming;
     };
 
-    const onWidthEnd = (event: TransitionEvent) => {
-      if (event.target !== clip || event.propertyName !== "width") return;
-      clip.removeEventListener("transitionend", onWidthEnd);
-      settle();
-    };
-    clip.addEventListener("transitionend", onWidthEnd);
     this.#morphTimers.set(
       key,
-      window.setTimeout(() => {
-        clip.removeEventListener("transitionend", onWidthEnd);
-        settle();
-      }, ui.widthMs + 80),
+      window.setTimeout(settle, ui.fadeMs + ui.fadeDelayMs + 80),
     );
 
     return shell;

@@ -34,7 +34,7 @@ Compute variable slots: any `slot` whose `text` differs across lenses.
 │ subtitle + description                          │
 │ ┌─ code surface (chrome.codeSurface) ─────────┐ │
 │ │ syntax-highlighted lines                    │ │
-│ │ slotted tokens with inline diff highlights  │ │
+│ │ slotted tokens = plain spans + morph sheen   │ │
 │ └─────────────────────────────────────────────┘ │
 │ footnote hint                                   │
 └─────────────────────────────────────────────────┘
@@ -44,7 +44,7 @@ Compute variable slots: any `slot` whose `text` differs across lenses.
 
 - When lens `L` is active, set panel background to `themes[themeId].lenses[L].panel`.
 - Each of the four lenses MUST use a **different** panel color within a theme.
-- Diff highlights use `diff` background behind text via a `::before` overlay (no border box — keeps baselines aligned).
+- Slotted tokens are plain inline spans at rest; on lens change they cross-fade with an optional per-token gradient sheen. Block glass sweeps the full panel.
 - Expose six themes: tropical, earth, earthenware, patina, fruits, desert.
 
 ## Interaction
@@ -68,23 +68,21 @@ Optional legacy mode: `touch.preview: "swipe"` enables horizontal swipe on the c
 
 For each slotted token when text changes:
 
-1. Measure old and new glyph width in monospace at 13px (include token `kind` styles, e.g. italic comments).
-2. At rest: inline span with a `::before` background overlay — **no border, no padding, no fixed width**.
-3. During morph only: switch to `inline-block` + `overflow: hidden` and animate **width** old→new over 420ms (`cubic-bezier(0.16, 1, 0.3, 1)`).
-4. Cross-fade text: outgoing span opacity 1→0 (220ms), incoming 0→1 (220ms, 60ms delay).
-5. Stack outgoing/incoming in CSS grid same cell so width animation doesn't spill glyphs.
-6. After morph completes, remove fixed width and return to inline overlay.
+1. At rest: plain inline span (`.el-slot`) with syntax class — no box, no fixed width.
+2. On lens change: cross-fade outgoing/incoming text in an `inline-grid` stack (same cell).
+3. Per-token gradient sheen (`::after` on `.el-slot-stack`) during the transition.
+4. No width animation — natural inline metrics only.
 
 ### Block glass overlay (when blur compositing is available)
 
-On any platform that supports blur (CSS `backdrop-filter`, native Material/blur APIs, `BackdropFilter`, etc.), simultaneously with steps 3–5 render a **single block-wide glass layer** over the code panel (not per-token). **Probe at runtime** — use morph + cross-fade only when blur is unavailable. See [glass-lens-capabilities.md](./glass-lens-capabilities.md).
+On any platform that supports blur (CSS `backdrop-filter`, native Material/blur APIs, `BackdropFilter`, etc.), simultaneously render a **single block-wide glass layer** over the code panel (not per-token). **Probe at runtime** — use cross-fade only when blur is unavailable. See [glass-lens-capabilities.md](./glass-lens-capabilities.md).
 
 - One overlay (`.el-code-glass`) covers the full code panel during lens switches.
 - Three diagonal gradient sheens sweep in opposing directions to simulate light on rotating glass; a brief `backdrop-filter` blur pass runs in parallel.
 - Duration: `glassBlockPassMs` (520ms default). **No line stagger** — the entire panel animates as one layer.
 - `mix-blend-mode: soft-light` and `pointer-events: none` keep syntax colors readable and text selectable underneath.
-- Runs in parallel with width morph and text cross-fade.
-- Honor `prefers-reduced-motion`: hide block glass, shorten width transition.
+- Runs in parallel with text cross-fade and per-token sheen.
+- Honor `prefers-reduced-motion`: hide block glass and per-token sheen.
 
 Non-slotted tokens: swap text instantly, syntax color by `kind`.
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.6] - 2026-05-29
+
+### Changed
+
+- **Slotted tokens** — removed diff highlight boxes and width morph. Slotted text is plain inline spans at rest; on lens change they cross-fade with a per-token gradient sheen while the block glass sweep runs over the panel.
+
 ## [0.3.5] - 2026-05-29
 
 ### Fixed
