@@ -132,16 +132,9 @@ code-lens.el-appearance-dark {
 }
 
 .el-line {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: baseline;
+  display: block;
   white-space: pre;
   line-height: inherit;
-}
-
-.el-line > * {
-  flex-shrink: 0;
 }
 
 .el-token-kind-keyword { color: var(--el-syntax-keyword); }
@@ -155,28 +148,36 @@ code-lens.el-appearance-dark {
 .el-token-kind-macro { color: var(--el-syntax-macro); }
 .el-token-kind-operator { color: var(--el-syntax-operator); }
 
-/* Slotted tokens — inline-block at rest and morph so display never flips; width pinned only while morphing */
+/* Slotted tokens — inline at rest (same line box as plain tokens); pinned box only while morphing */
 .el-slot {
-  display: inline-block;
-  width: auto;
+  display: inline;
   vertical-align: baseline;
   line-height: inherit;
 }
 
 .el-slot.is-morphing {
+  display: inline-block;
+  vertical-align: baseline;
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  padding: 0;
+  margin: 0;
+  box-sizing: content-box;
+  line-height: inherit;
 }
 
 .el-slot.is-morphing .el-slot-in {
+  display: inline;
   white-space: pre;
+  line-height: inherit;
 }
 
 .el-slot.is-morphing .el-slot-out {
   position: absolute;
   left: 0;
   top: 0;
+  display: inline;
   line-height: inherit;
   white-space: pre;
   overflow: hidden;

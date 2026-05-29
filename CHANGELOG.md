@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.10] - 2026-05-29
+
+### Fixed
+
+- **Slotted token line height during morph** — slots stay `display: inline` at rest; morph box uses measured width **and height** so lines cannot grow taller than settled text.
+
 ## [0.3.9] - 2026-05-29
 
 ### Fixed

@@ -295,9 +295,9 @@ export class CodeLensElement extends HTMLElement {
     this.#morphTimers.clear();
   }
 
-  /** Measure token width in the code panel font (incoming text sets morph width). */
-  #measureTokenWidth(text: string, kind: string): number {
-    if (!this.#codeEl || !text) return 0;
+  /** Measure settled slotted token box in the code panel font. */
+  #measureTokenBounds(text: string, kind: string): { width: number; height: number } {
+    if (!this.#codeEl || !text) return { width: 0, height: 0 };
     if (!this.#textProbe) {
       this.#textProbe = document.createElement("span");
       this.#textProbe.setAttribute("aria-hidden", "true");
@@ -311,7 +311,8 @@ export class CodeLensElement extends HTMLElement {
     span.textContent = text;
     this.#textProbe.appendChild(span);
     this.#textProbe.style.font = getComputedStyle(this.#codeEl).font;
-    return Math.ceil(span.getBoundingClientRect().width);
+    const rect = span.getBoundingClientRect();
+    return { width: Math.ceil(rect.width), height: Math.ceil(rect.height) };
   }
 
   #renderCode(): void {
@@ -395,7 +396,9 @@ export class CodeLensElement extends HTMLElement {
 
     const shell = document.createElement("span");
     shell.className = "el-slot is-morphing";
-    shell.style.width = `${this.#measureTokenWidth(state.incoming, token.kind)}px`;
+    const bounds = this.#measureTokenBounds(state.incoming, token.kind);
+    shell.style.width = `${bounds.width}px`;
+    shell.style.height = `${bounds.height}px`;
 
     const outSpan = document.createElement("span");
     outSpan.className = `el-slot-out el-token-kind-${token.kind}`;
@@ -422,6 +425,7 @@ export class CodeLensElement extends HTMLElement {
       state!.outgoing = null;
       shell.className = `el-slot el-token-kind-${token.kind}`;
       shell.style.width = "";
+      shell.style.height = "";
       shell.replaceChildren(document.createTextNode(state!.incoming));
     };
 
