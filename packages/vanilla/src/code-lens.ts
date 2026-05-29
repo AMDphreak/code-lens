@@ -46,6 +46,7 @@ export class CodeLensElement extends HTMLElement {
   #toolbarEl: HTMLDivElement | null = null;
   #codeEl: HTMLPreElement | null = null;
   #codeGlassEl: HTMLDivElement | null = null;
+  #textProbe: HTMLSpanElement | null = null;
   #tabButtons: HTMLButtonElement[] = [];
   #glassEnabled = true;
   #appearanceCleanup: (() => void) | null = null;
@@ -294,6 +295,25 @@ export class CodeLensElement extends HTMLElement {
     this.#morphTimers.clear();
   }
 
+  /** Measure token width in the code panel font (incoming text sets morph width). */
+  #measureTokenWidth(text: string, kind: string): number {
+    if (!this.#codeEl || !text) return 0;
+    if (!this.#textProbe) {
+      this.#textProbe = document.createElement("span");
+      this.#textProbe.setAttribute("aria-hidden", "true");
+      this.#textProbe.style.cssText =
+        "position:absolute;visibility:hidden;white-space:pre;pointer-events:none;top:0;left:0";
+      this.#codeEl.appendChild(this.#textProbe);
+    }
+    this.#textProbe.replaceChildren();
+    const span = document.createElement("span");
+    span.className = `el-slot el-token-kind-${kind}`;
+    span.textContent = text;
+    this.#textProbe.appendChild(span);
+    this.#textProbe.style.font = getComputedStyle(this.#codeEl).font;
+    return Math.ceil(span.getBoundingClientRect().width);
+  }
+
   #renderCode(): void {
     if (!this.#codeEl || !this.#config) return;
     this.#morphGeneration++;
@@ -305,7 +325,9 @@ export class CodeLensElement extends HTMLElement {
       this.#lastRenderedLensIndex !== null && this.#lastRenderedLensIndex !== lensIdx;
 
     const glass = this.#codeGlassEl;
+    const probe = this.#textProbe;
     this.#codeEl.innerHTML = "";
+    if (probe) this.#codeEl.appendChild(probe);
     if (glass) this.#codeEl.appendChild(glass);
 
     base.forEach((line, lineIdx) => {
@@ -373,9 +395,7 @@ export class CodeLensElement extends HTMLElement {
 
     const shell = document.createElement("span");
     shell.className = "el-slot is-morphing";
-
-    const stack = document.createElement("span");
-    stack.className = "el-slot-stack";
+    shell.style.width = `${this.#measureTokenWidth(state.incoming, token.kind)}px`;
 
     const outSpan = document.createElement("span");
     outSpan.className = `el-slot-out el-token-kind-${token.kind}`;
@@ -389,8 +409,7 @@ export class CodeLensElement extends HTMLElement {
     inSpan.style.opacity = String(state.inOpacity);
     inSpan.style.transition = `opacity var(--el-fade-ms) ease-in ${ui.fadeDelayMs}ms`;
 
-    stack.append(inSpan, outSpan);
-    shell.appendChild(stack);
+    shell.append(inSpan, outSpan);
 
     requestAnimationFrame(() => {
       outSpan.style.opacity = "0";
@@ -402,6 +421,7 @@ export class CodeLensElement extends HTMLElement {
       this.#morphTimers.delete(key);
       state!.outgoing = null;
       shell.className = `el-slot el-token-kind-${token.kind}`;
+      shell.style.width = "";
       shell.textContent = state!.incoming;
     };
 

@@ -148,28 +148,27 @@ code-lens.el-appearance-dark {
 .el-token-kind-macro { color: var(--el-syntax-macro); }
 .el-token-kind-operator { color: var(--el-syntax-operator); }
 
-/* Slotted tokens — same inline metrics as plain tokens; gradient sheen only while morphing */
+/* Slotted tokens — plain inline at rest; fixed measured width only while morphing */
 .el-slot {
   display: inline;
   vertical-align: baseline;
   line-height: inherit;
 }
 
-.el-slot-stack {
+.el-slot.is-morphing {
+  position: relative;
   display: inline-block;
   vertical-align: baseline;
-  line-height: inherit;
-}
-
-.el-slot.is-morphing .el-slot-stack {
-  position: relative;
-  isolation: isolate;
   overflow: hidden;
+  line-height: inherit;
+  isolation: isolate;
 }
 
-/* Incoming text sets width; outgoing is overlaid for cross-fade only */
 .el-slot.is-morphing .el-slot-in {
+  display: block;
   white-space: pre;
+  overflow: hidden;
+  text-overflow: clip;
 }
 
 .el-slot.is-morphing .el-slot-out {
@@ -178,11 +177,12 @@ code-lens.el-appearance-dark {
   top: 0;
   line-height: inherit;
   white-space: pre;
-  max-width: 100%;
   overflow: hidden;
+  text-overflow: clip;
+  max-width: 100%;
 }
 
-.el-slot.is-morphing .el-slot-stack::after {
+.el-slot.is-morphing::after {
   content: "";
   position: absolute;
   inset: -0.06em -0.12em;
@@ -416,7 +416,7 @@ code-lens.el-glass-disabled .el-tab[aria-selected="true"] {
     animation: none;
     opacity: 0;
   }
-  .el-slot.is-morphing .el-slot-stack::after {
+  .el-slot.is-morphing::after {
     animation: none;
     opacity: 0;
   }

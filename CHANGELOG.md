@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.8] - 2026-05-29
+
+### Fixed
+
+- **Slotted morph width** — pin morph shell to measured incoming text width; drop stack wrapper so shrink-to-fit no longer sums both strings.
+
 ## [0.3.7] - 2026-05-29
 
 ### Fixed
