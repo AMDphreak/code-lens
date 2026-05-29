@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.9] - 2026-05-29
+
+### Fixed
+
+- **Vertical spacing during slotted morph** — slotted tokens stay `inline-block` at rest and morph (no display flip); removed `display: block` on incoming layer; code lines use flex `align-items: baseline`.
+
 ## [0.3.8] - 2026-05-29
 
 ### Fixed

@@ -422,7 +422,7 @@ export class CodeLensElement extends HTMLElement {
       state!.outgoing = null;
       shell.className = `el-slot el-token-kind-${token.kind}`;
       shell.style.width = "";
-      shell.textContent = state!.incoming;
+      shell.replaceChildren(document.createTextNode(state!.incoming));
     };
 
     this.#morphTimers.set(
