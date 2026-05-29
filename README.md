@@ -2,7 +2,7 @@
 
 Multi-lens code block — one snippet, multiple pedagogical naming conventions (didactic, schematic, contextual, role-labeled).
 
-**Live demo:** [amdphreak.github.io/code-example-lenses](https://amdphreak.github.io/code-example-lenses/)
+**Live demo:** [ryanjohnson.dev/code-example-lenses](https://ryanjohnson.dev/code-example-lenses/)
 
 ## Why
 
