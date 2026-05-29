@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Example Lenses — @examplens</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans&family=Space+Grotesk:wght@400;600&family=Space+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <p class="eyebrow">@examplens / lens-code-block</p>
+        <h1>Code Example Lenses</h1>
+        <p class="lede">
+          One snippet, multiple pedagogical naming conventions. Portable JSON5 spec — implementations
+          for web, desktop, and mobile.
+        </p>
+        <nav class="site-nav">
+          <a href="https://github.com/AMDphreak/code-example-lenses">Repository</a>
+          <a href="#demo">Live demo</a>
+          <a href="#spec">Specification</a>
+          <a href="#implementations">Implementations</a>
+          <a href="#ai-spec">AI reproduction spec</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section id="context" class="section">
+        <h2>Where this idea comes from</h2>
+        <p>
+          Technical authors pick one naming convention per code example and hope you recognize the
+          pattern. Readers routinely encounter four <em>referential strategies</em> — didactic,
+          schematic, contextual, and role-labeled — without vocabulary to name them. A lens block
+          keeps syntax fixed while identifiers, strings, and comments rotate to show each strategy.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>The four lenses</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Lens</th>
+                <th>Also called</th>
+                <th>Foregrounds</th>
+                <th>Trade-off</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Didactic</td>
+                <td>Concept-labeled</td>
+                <td>Names that <em>are</em> the lesson</td>
+                <td>Fast; unlike production code</td>
+              </tr>
+              <tr>
+                <td>Schematic</td>
+                <td>Abstract placeholders</td>
+                <td>Syntax and structure</td>
+                <td>Clear grammar; weak domain transfer</td>
+              </tr>
+              <tr>
+                <td>Contextual</td>
+                <td>Production-shaped</td>
+                <td>Real ecosystem idioms</td>
+                <td>Transferable; must excavate relevance</td>
+              </tr>
+              <tr>
+                <td>Role-labeled</td>
+                <td>Structural roles</td>
+                <td>Function inside the example</td>
+                <td>Scaffold between didactic and real</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="demo" class="section">
+        <div class="demo-head">
+          <h2>Live demo</h2>
+          <label class="theme-picker">
+            Color scheme
+            <select id="theme-select"></select>
+          </label>
+        </div>
+        <p class="hint">
+          Desktop: hover lens tabs (glass indicator slides). Touch: swipe the code panel. Each lens
+          uses a distinct panel background from the active color scheme.
+        </p>
+        <div id="demo-host"></div>
+      </section>
+
+      <section id="spec" class="section">
+        <h2>Portable specification</h2>
+        <p>
+          Implementations load three JSON5 files from <code>spec/</code>. This keeps UI behavior,
+          themes, and example content independent of any framework.
+        </p>
+        <ul class="spec-list">
+          <li><code>spec/lens-block.schema.json5</code> — document schema</li>
+          <li><code>spec/examples/*.json5</code> — lens-aligned token data</li>
+          <li><code>spec/themes.json5</code> — color schemes (tropical, earth, earthenware, patina, fruits, desert)</li>
+          <li><code>spec/ui.json5</code> — interaction + animation constants</li>
+        </ul>
+        <p>
+          <a href="https://github.com/AMDphreak/code-example-lenses/blob/main/docs/specification.md">Full specification →</a>
+        </p>
+      </section>
+
+      <section id="implementations" class="section">
+        <h2>Implementations</h2>
+        <div id="impl-table"></div>
+        <p>
+          <a href="https://github.com/AMDphreak/code-example-lenses/blob/main/implementations/REGISTRY.md">Complete registry →</a>
+        </p>
+      </section>
+
+      <section id="ai-spec" class="section">
+        <h2>AI / LLM reproduction spec</h2>
+        <p>
+          Paste the linked document into an LLM to reproduce the component in another framework or
+          toolkit. It encodes layout, motion, spec loading, and accessibility requirements.
+        </p>
+        <p>
+          <a href="https://github.com/AMDphreak/code-example-lenses/blob/main/docs/ai-reproduction-spec.md">AI reproduction spec →</a>
+        </p>
+        <details class="ai-preview">
+          <summary>Preview (abbreviated)</summary>
+          <pre id="ai-preview"></pre>
+        </details>
+      </section>
+    </main>
+
+    <footer class="site-footer wrap">
+      <p>MIT · <a href="https://github.com/AMDphreak">AMDphreak</a></p>
+    </footer>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

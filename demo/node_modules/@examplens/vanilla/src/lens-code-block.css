@@ -1,0 +1,182 @@
+:host {
+  display: block;
+  --el-width-ms: 420ms;
+  --el-width-easing: cubic-bezier(0.16, 1, 0.3, 1);
+  --el-fade-ms: 220ms;
+  --el-glass-ms: 320ms;
+  font-family: system-ui, sans-serif;
+  color: var(--el-text, #2c2824);
+}
+
+.el-root {
+  border: 1px solid var(--el-border, #d4d0c8);
+  overflow: hidden;
+  background: var(--el-toolbar, #f0efec);
+}
+
+.el-toolbar {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  border-bottom: 1px solid var(--el-border, #d4d0c8);
+  background: var(--el-toolbar, #f0efec);
+}
+
+.el-glass {
+  position: absolute;
+  z-index: 0;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: var(--el-glass-tint, rgba(255, 255, 255, 0.2));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 8px rgba(0, 0, 0, 0.06);
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    left var(--el-glass-ms) var(--el-width-easing),
+    width var(--el-glass-ms) var(--el-width-easing),
+    height 200ms ease,
+    opacity 200ms ease;
+}
+
+.el-tab {
+  position: relative;
+  z-index: 1;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 4px 10px;
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  color: inherit;
+  border-radius: 4px;
+}
+
+.el-tab[aria-selected="true"] {
+  font-weight: 600;
+}
+
+.el-body {
+  padding: 16px;
+  background: var(--el-panel-bg, #f3ebe4);
+  transition: background 200ms ease;
+}
+
+.el-meta-sub {
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.7;
+  margin: 0 0 4px;
+}
+
+.el-meta-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 12px;
+  opacity: 0.85;
+}
+
+.el-code-wrap {
+  position: relative;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.el-swipe-hint {
+  display: none;
+  font-family: ui-monospace, monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+
+@media (pointer: coarse) {
+  .el-swipe-hint {
+    display: block;
+  }
+}
+
+.el-code {
+  overflow-x: auto;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--el-border, #d4d0c8);
+  background: var(--el-code-surface, #fafaf8);
+  font-family: var(--el-code-font, "Space Mono", monospace);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.el-line {
+  white-space: pre;
+}
+
+.el-token-kind-keyword { color: var(--el-syntax-keyword); }
+.el-token-kind-type { color: var(--el-syntax-type); }
+.el-token-kind-identifier { color: var(--el-syntax-identifier); }
+.el-token-kind-string { color: var(--el-syntax-string); }
+.el-token-kind-comment { color: var(--el-syntax-comment); font-style: italic; }
+.el-token-kind-punctuation { color: var(--el-syntax-punctuation); }
+.el-token-kind-number { color: var(--el-syntax-number); }
+.el-token-kind-builtin { color: var(--el-syntax-builtin); }
+.el-token-kind-macro { color: var(--el-syntax-macro); }
+.el-token-kind-operator { color: var(--el-syntax-operator); }
+
+.el-diff {
+  display: inline-block;
+  vertical-align: baseline;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  border: 1px solid var(--el-diff-border);
+  background: var(--el-diff-bg);
+  transition: width var(--el-width-ms) var(--el-width-easing);
+}
+
+.el-diff-inner {
+  display: block;
+  overflow: hidden;
+  padding: 0 2px;
+}
+
+.el-diff-text {
+  display: grid;
+}
+
+.el-diff-text > span {
+  grid-area: 1 / 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.el-foot {
+  margin: 12px 0 0;
+  font-family: ui-monospace, monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.55;
+}
+
+.el-swipe-ghost {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: var(--el-panel-bg);
+  transition: opacity 120ms ease;
+}
+
+.el-swipe-ghost.visible {
+  opacity: var(--el-swipe-opacity, 0.35);
+}

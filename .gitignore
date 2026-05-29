@@ -1,11 +1,18 @@
+# allow-list
 *
 !.gitignore
-!spec/**
-!docs/**
-!packages/**
-!demo/**
-!implementations/**
+!.github/
 !.github/**
+!spec/
+!spec/**
+!docs/
+!docs/**
+!packages/
+!packages/**
+!demo/
+!demo/**
+!implementations/
+!implementations/**
 !README.md
 !CHANGELOG.md
 !LICENSE

@@ -1,0 +1,25 @@
+{
+  "name": "@examplens/core",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Spec loader and shared logic for LensCodeBlock",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "json5": "^2.2.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

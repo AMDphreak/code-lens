@@ -1,0 +1,43 @@
+{
+  version: 1,
+  description: "Portable document for a LensCodeBlock instance. Implementations load this file (JSON5) plus spec/themes.json5 and spec/ui.json5.",
+  required: ["version", "language", "lenses"],
+  properties: {
+    version: { type: "integer", const: 1 },
+    id: { type: "string" },
+    language: { type: "string" },
+    defaultTheme: { type: "string" },
+    lenses: {
+      type: "array",
+      minItems: 2,
+      items: {
+        type: "object",
+        required: ["id", "label", "lines"],
+        properties: {
+          id: { type: "string", enum: ["didactic", "schematic", "contextual", "role"] },
+          label: { type: "string" },
+          subtitle: { type: "string" },
+          description: { type: "string" },
+          lines: {
+            type: "array",
+            items: {
+              type: "array",
+              items: {
+                type: "object",
+                required: ["text", "kind"],
+                properties: {
+                  text: { type: "string" },
+                  kind: {
+                    type: "string",
+                    enum: ["keyword", "type", "identifier", "string", "comment", "punctuation", "number", "builtin", "macro", "operator"],
+                  },
+                  slot: { type: "string", description: "Shared key for tokens that vary across lenses at the same position." },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}

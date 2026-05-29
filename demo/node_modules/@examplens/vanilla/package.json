@@ -1,0 +1,26 @@
+{
+  "name": "@examplens/vanilla",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "LensCodeBlock web component (vanilla JS)",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./lens-code-block.css": "./dist/lens-code-block.css"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node ./scripts/copy-css.mjs"
+  },
+  "dependencies": {
+    "@examplens/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

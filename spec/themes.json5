@@ -1,0 +1,80 @@
+// Each theme assigns a distinct panel background per lens type.
+// Implementations MUST tint the code panel (or full block body) with lens.panel.
+{
+  version: 1,
+  defaultTheme: "earth",
+  themes: {
+    tropical: {
+      label: "Tropical",
+      lenses: {
+        didactic: { panel: "#FFF0EB", diff: "#FFD4C4", diffBorder: "#FF9B7A", glass: "rgba(255,155,122,0.18)" },
+        schematic: { panel: "#E8FBF8", diff: "#A8EDE4", diffBorder: "#3CB8A8", glass: "rgba(60,184,168,0.18)" },
+        contextual: { panel: "#E5F5E0", diff: "#B8E8A8", diffBorder: "#5BA848", glass: "rgba(91,168,72,0.18)" },
+        role: { panel: "#FFF8E7", diff: "#FFE4A8", diffBorder: "#E8A830", glass: "rgba(232,168,48,0.18)" },
+      },
+      chrome: { codeSurface: "#FFFFFF", toolbar: "#F5FAF9", border: "#C8E6E0", text: "#1A2E28" },
+    },
+    earth: {
+      label: "Earth tones",
+      lenses: {
+        didactic: { panel: "#F3EBE4", diff: "#DCC8B8", diffBorder: "#A67C5B", glass: "rgba(166,124,91,0.15)" },
+        schematic: { panel: "#EBF0E8", diff: "#C5D8BC", diffBorder: "#6B8F5E", glass: "rgba(107,143,94,0.15)" },
+        contextual: { panel: "#E8EEF0", diff: "#B8CCD8", diffBorder: "#5B7A8F", glass: "rgba(91,122,143,0.15)" },
+        role: { panel: "#EDE8E4", diff: "#D4C8BC", diffBorder: "#8F735B", glass: "rgba(143,115,91,0.15)" },
+      },
+      chrome: { codeSurface: "#FAFAF8", toolbar: "#F0EFEC", border: "#D4D0C8", text: "#2C2824" },
+    },
+    earthenware: {
+      label: "Earthenware",
+      lenses: {
+        didactic: { panel: "#F5EAE3", diff: "#E0C4B0", diffBorder: "#B8734A", glass: "rgba(184,115,74,0.16)" },
+        schematic: { panel: "#EAE8E0", diff: "#CFCAB8", diffBorder: "#8A8470", glass: "rgba(138,132,112,0.16)" },
+        contextual: { panel: "#E6EBF0", diff: "#B8C8DC", diffBorder: "#4A6A8F", glass: "rgba(74,106,143,0.16)" },
+        role: { panel: "#F0EBE0", diff: "#DCCFB0", diffBorder: "#A89050", glass: "rgba(168,144,80,0.16)" },
+      },
+      chrome: { codeSurface: "#FDFBF7", toolbar: "#F2EFE8", border: "#D8D0C0", text: "#3A3428" },
+    },
+    patina: {
+      label: "Patina",
+      lenses: {
+        didactic: { panel: "#E4F0EE", diff: "#A8D8D0", diffBorder: "#3A9088", glass: "rgba(58,144,136,0.18)" },
+        schematic: { panel: "#F0EBE4", diff: "#D4C4A8", diffBorder: "#8F7350", glass: "rgba(143,115,80,0.16)" },
+        contextual: { panel: "#F0E8E4", diff: "#D8B8A8", diffBorder: "#8F5B4A", glass: "rgba(143,91,74,0.16)" },
+        role: { panel: "#E8EDE8", diff: "#B8C8B8", diffBorder: "#5A7058", glass: "rgba(90,112,88,0.16)" },
+      },
+      chrome: { codeSurface: "#F8FAF9", toolbar: "#EEF2F0", border: "#B8C8C4", text: "#1E2826" },
+    },
+    fruits: {
+      label: "Fruits",
+      lenses: {
+        didactic: { panel: "#FCE8EE", diff: "#F0A8C0", diffBorder: "#C84878", glass: "rgba(200,72,120,0.16)" },
+        schematic: { panel: "#ECE8F5", diff: "#B8A8E0", diffBorder: "#6848A8", glass: "rgba(104,72,168,0.16)" },
+        contextual: { panel: "#E8F5E8", diff: "#98D898", diffBorder: "#38A838", glass: "rgba(56,168,56,0.16)" },
+        role: { panel: "#F5F3E8", diff: "#E8DC98", diffBorder: "#C8A830", glass: "rgba(200,168,48,0.16)" },
+      },
+      chrome: { codeSurface: "#FFFFFF", toolbar: "#F8F6FA", border: "#D8D0E0", text: "#28242E" },
+    },
+    desert: {
+      label: "Desert",
+      lenses: {
+        didactic: { panel: "#F5EDE3", diff: "#E0C8A0", diffBorder: "#B89050", glass: "rgba(184,144,80,0.16)" },
+        schematic: { panel: "#E8EDF2", diff: "#A8B8D0", diffBorder: "#5070A0", glass: "rgba(80,112,160,0.16)" },
+        contextual: { panel: "#E5F0E5", diff: "#98C898", diffBorder: "#488848", glass: "rgba(72,136,72,0.16)" },
+        role: { panel: "#F0E8E0", diff: "#D8C0A0", diffBorder: "#A07848", glass: "rgba(160,120,72,0.16)" },
+      },
+      chrome: { codeSurface: "#FDFAF5", toolbar: "#F0EBE4", border: "#D0C4B4", text: "#3A3228" },
+    },
+  },
+  syntax: {
+    keyword: "#6B4FA0",
+    type: "#2878A8",
+    identifier: "#2C2824",
+    string: "#2A8848",
+    comment: "#787068",
+    punctuation: "#504C48",
+    number: "#A87020",
+    builtin: "#B84858",
+    macro: "#B84858",
+    operator: "#504C48",
+  },
+}
