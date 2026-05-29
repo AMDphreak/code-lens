@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.11] - 2026-05-29
+
+### Fixed
+
+- **Restore slotted morph layout** — revert `45f4534` height-lock experiment; back to `921d0b9` (flex baseline lines, inline-block slots, width-only pin).
+
 ## [0.3.10] - 2026-05-29
 
 ### Fixed
