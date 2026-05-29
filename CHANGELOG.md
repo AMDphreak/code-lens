@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.13] - 2026-05-29
+
+### Added
+
+- **Slot highlight modes** — `slotHighlight="plain"|"box"` / `slot-highlight="box"` for rounded pills on changeable tokens; optional `@code-lens/css/slots-box.css` for global box styling.
+- Demo **Plain / Box** toggle with persisted preference.
+
 ## [0.3.12] - 2026-05-29
 
 ### Changed

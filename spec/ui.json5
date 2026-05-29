@@ -31,5 +31,6 @@
     codeFontFamily: '"Space Mono", "SF Mono", "Fira Code", monospace',
     codeFontSizePx: 13,
     glassBlurPx: 12,
+    defaultSlotHighlight: "plain",
   },
 }

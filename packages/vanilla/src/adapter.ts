@@ -21,17 +21,19 @@ export function ensureCodeLensRegistered(): void {
 
 export function syncCodeLensElement(
   el: CodeLensElement,
-  props: Pick<CodeLensConfig, "themeId" | "appearance">,
+  props: Pick<CodeLensConfig, "themeId" | "appearance" | "slotHighlight">,
 ): void {
   if (props.themeId) el.setAttribute("theme", props.themeId);
   else el.removeAttribute("theme");
   el.setAttribute("appearance", props.appearance ?? "auto");
+  if (props.slotHighlight === "box") el.setAttribute("slot-highlight", "box");
+  else el.removeAttribute("slot-highlight");
 }
 
 /** Sync theme/appearance attributes and re-apply CSS variables (no full re-render). */
 export function patchCodeLensTheme(
   el: CodeLensElement,
-  props: Pick<CodeLensConfig, "themeId" | "appearance">,
+  props: Pick<CodeLensConfig, "themeId" | "appearance" | "slotHighlight">,
 ): void {
   syncCodeLensElement(el, props);
   el.refreshAppearance();

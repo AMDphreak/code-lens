@@ -43,6 +43,8 @@ document.body.appendChild(el);
 
 `appearance`: `auto` | `light` | `dark` — independent of pedagogical color theme.
 
+`slotHighlight`: `plain` | `box` — rounded highlight on changeable tokens (default `plain`).
+
 ## Portable spec
 
 | File | Role |

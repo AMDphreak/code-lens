@@ -19,6 +19,7 @@ export {
   registerLensCodeBlock,
   type CodeLensConfig,
   type LensCodeBlockConfig,
+  type SlotHighlight,
 } from "./code-lens.js";
 
 export function injectCodeLensStyles(doc: Document = document): void {

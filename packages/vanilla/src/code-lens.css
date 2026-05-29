@@ -163,6 +163,41 @@ code-lens.el-appearance-dark {
   line-height: inherit;
 }
 
+/* Rounded box on changeable tokens — slot-highlight="box" */
+:host([slot-highlight="box"]) .el-slot,
+:host(.el-slot-highlight-box) .el-slot,
+code-lens[slot-highlight="box"] .el-slot,
+code-lens.el-slot-highlight-box .el-slot {
+  position: relative;
+  isolation: isolate;
+}
+
+:host([slot-highlight="box"]) .el-slot::before,
+:host(.el-slot-highlight-box) .el-slot::before,
+code-lens[slot-highlight="box"] .el-slot::before,
+code-lens.el-slot-highlight-box .el-slot::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: calc(-1 * var(--el-diff-pad-x, 2px));
+  right: calc(-1 * var(--el-diff-pad-x, 2px));
+  top: 0.06em;
+  bottom: 0.06em;
+  border-radius: var(--el-diff-radius, 3px);
+  background: var(--el-diff-bg);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--el-diff-border) 55%, transparent);
+}
+
+:host([slot-highlight="box"]) .el-slot.is-morphing::before,
+:host(.el-slot-highlight-box) .el-slot.is-morphing::before,
+code-lens[slot-highlight="box"] .el-slot.is-morphing::before,
+code-lens.el-slot-highlight-box .el-slot.is-morphing::before {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
 .el-slot.is-morphing {
   position: relative;
   overflow: hidden;

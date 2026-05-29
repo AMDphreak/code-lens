@@ -97,6 +97,8 @@ export type UiDocument = {
     codeFontFamily: string;
     codeFontSizePx: number;
     glassBlurPx: number;
+    /** Default slotted-token highlight when attribute/config omit slotHighlight */
+    defaultSlotHighlight?: "plain" | "box";
   };
 };
 

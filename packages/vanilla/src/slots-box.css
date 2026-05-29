@@ -1,0 +1,31 @@
+﻿/**
+ * Optional global slot box highlight — import after code-lens.css.
+ *
+ *   import "@code-lens/css";
+ *   import "@code-lens/css/slots-box.css";
+ */
+
+code-lens .el-slot {
+  position: relative;
+  isolation: isolate;
+}
+
+code-lens .el-slot::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: calc(-1 * var(--el-diff-pad-x, 2px));
+  right: calc(-1 * var(--el-diff-pad-x, 2px));
+  top: 0.06em;
+  bottom: 0.06em;
+  border-radius: var(--el-diff-radius, 3px);
+  background: var(--el-diff-bg);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--el-diff-border) 55%, transparent);
+}
+
+code-lens .el-slot.is-morphing::before {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}

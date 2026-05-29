@@ -86,7 +86,8 @@ Applies to tokens with a `slot` key whose text **varies** across lenses.
 
 - Element: `<span class="el-slot el-token-kind-{kind}">`
 - CSS: `display: inline-block; width: auto; vertical-align: baseline; line-height: inherit`
-- **MUST NOT** use diff highlight boxes, borders, or fixed pixel width.
+- **MUST NOT** use diff highlight boxes, borders, or fixed pixel width by default.
+- Optional **box** mode: `slot-highlight="box"` or `slotHighlight="box"` adds rounded pill via `::before` (`--el-diff-bg`, `--el-diff-border`, padding/radius from `ui.json5`).
 
 ### On lens change (when incoming text ≠ previous)
 

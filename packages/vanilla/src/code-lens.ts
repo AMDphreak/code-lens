@@ -23,19 +23,23 @@ type MorphState = {
   inOpacity: number;
 };
 
+export type SlotHighlight = "plain" | "box";
+
 export type CodeLensConfig = {
   document: LensBlockDocument;
   themes: ThemesDocument;
   ui: UiDocument;
   themeId?: string;
   appearance?: AppearancePreference;
+  /** Slotted token chrome — plain (default) or rounded highlight box */
+  slotHighlight?: SlotHighlight;
 };
 
 /** @deprecated Use CodeLensConfig */
 export type LensCodeBlockConfig = CodeLensConfig;
 
 export class CodeLensElement extends HTMLElement {
-  static observedAttributes = ["theme", "appearance"];
+  static observedAttributes = ["theme", "appearance", "slot-highlight"];
 
   #config: CodeLensConfig | null = null;
   #committed = 0;
@@ -76,6 +80,7 @@ export class CodeLensElement extends HTMLElement {
     this.#config = config;
     if (config.appearance) this.setAttribute("appearance", config.appearance);
     if (config.themeId) this.setAttribute("theme", config.themeId);
+    this.#syncSlotHighlight();
     this.#variableSlots = collectVariableSlots(config.document.lenses);
     this.#committed = 0;
     this.#preview = null;
@@ -96,6 +101,25 @@ export class CodeLensElement extends HTMLElement {
     if (name === "appearance") {
       this.#onAppearanceChange();
     }
+    if (name === "slot-highlight") {
+      this.#syncSlotHighlight();
+    }
+  }
+
+  #syncSlotHighlight(): void {
+    const mode = this.#slotHighlight();
+    this.classList.toggle("el-slot-highlight-box", mode === "box");
+    if (mode === "box") this.setAttribute("slot-highlight", "box");
+    else this.removeAttribute("slot-highlight");
+  }
+
+  #slotHighlight(): SlotHighlight {
+    const attr = this.getAttribute("slot-highlight");
+    if (attr === "box" || attr === "plain") return attr;
+    if (this.#config?.slotHighlight) return this.#config.slotHighlight;
+    const fromUi = this.#config?.ui.layout.defaultSlotHighlight;
+    if (fromUi === "box" || fromUi === "plain") return fromUi;
+    return "plain";
   }
 
   #onAppearanceChange(): void {
@@ -139,6 +163,8 @@ export class CodeLensElement extends HTMLElement {
       "--el-swipe-opacity",
       String(this.#config!.ui.interaction.touch.swipeRevealOpacity),
     );
+    this.style.setProperty("--el-diff-pad-x", `${ui.animation.diffTokenPaddingPx}px`);
+    this.style.setProperty("--el-diff-radius", `${ui.animation.diffTokenRadiusPx}px`);
   }
 
   #render(): void {
@@ -509,6 +535,7 @@ export function createCodeLens(config: CodeLensConfig, themeId?: string): CodeLe
   const el = document.createElement(TAG) as CodeLensElement;
   if (themeId) el.setAttribute("theme", themeId);
   if (config.appearance) el.setAttribute("appearance", config.appearance);
+  if (config.slotHighlight === "box") el.setAttribute("slot-highlight", "box");
   el.configure(config);
   return el;
 }

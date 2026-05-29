@@ -9,3 +9,7 @@ copyFileSync(
   join(dir, "../../vanilla/src/code-lens.css"),
   join(out, "code-lens.css"),
 );
+copyFileSync(
+  join(dir, "../../vanilla/src/slots-box.css"),
+  join(out, "slots-box.css"),
+);

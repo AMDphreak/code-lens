@@ -12,6 +12,7 @@
       "import": "./dist/index.js"
     },
     "./code-lens.css": "./dist/code-lens.css",
+    "./slots-box.css": "./dist/slots-box.css",
     "./adapter": {
       "types": "./dist/adapter.d.ts",
       "import": "./dist/adapter.js"

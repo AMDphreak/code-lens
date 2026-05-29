@@ -5,6 +5,7 @@ import {
   detachCodeLens,
   patchCodeLensTheme,
   type CodeLensElement,
+  type SlotHighlight,
 } from "@code-lens/vanilla";
 
 export type CodeLensProps = {
@@ -13,6 +14,7 @@ export type CodeLensProps = {
   ui: UiDocument;
   themeId?: string;
   appearance?: AppearancePreference;
+  slotHighlight?: SlotHighlight;
   class?: string;
 };
 
@@ -28,6 +30,7 @@ export function CodeLens(props: CodeLensProps) {
       ui: props.ui,
       themeId: props.themeId,
       appearance: props.appearance ?? "auto",
+      slotHighlight: props.slotHighlight,
     });
     setEl(node);
     onCleanup(() => detachCodeLens(host));
@@ -45,6 +48,7 @@ export function CodeLens(props: CodeLensProps) {
       ui: props.ui,
       themeId: props.themeId,
       appearance: props.appearance ?? "auto",
+      slotHighlight: props.slotHighlight,
     });
   });
 
@@ -54,6 +58,7 @@ export function CodeLens(props: CodeLensProps) {
     patchCodeLensTheme(node, {
       themeId: props.themeId,
       appearance: props.appearance ?? "auto",
+      slotHighlight: props.slotHighlight,
     });
   });
 
@@ -61,7 +66,7 @@ export function CodeLens(props: CodeLensProps) {
 }
 
 export { registerCodeLens, createCodeLens } from "@code-lens/vanilla";
-export type { CodeLensElement, CodeLensConfig } from "@code-lens/vanilla";
+export type { CodeLensElement, CodeLensConfig, SlotHighlight } from "@code-lens/vanilla";
 
 export {
   collectVariableSlots,

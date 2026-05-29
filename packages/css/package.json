@@ -6,7 +6,8 @@
   "license": "MIT",
   "exports": {
     ".": "./dist/code-lens.css",
-    "./code-lens.css": "./dist/code-lens.css"
+    "./code-lens.css": "./dist/code-lens.css",
+    "./slots-box.css": "./dist/slots-box.css"
   },
   "files": ["dist"],
   "scripts": {
