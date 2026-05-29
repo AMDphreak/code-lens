@@ -1,0 +1,14 @@
+*
+!.gitignore
+!spec/**
+!docs/**
+!packages/**
+!demo/**
+!implementations/**
+!.github/**
+!README.md
+!CHANGELOG.md
+!LICENSE
+!package.json
+!pnpm-workspace.yaml
+!pnpm-lock.yaml
