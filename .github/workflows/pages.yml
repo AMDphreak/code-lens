@@ -27,6 +27,7 @@ jobs:
       - run: pnpm install
       - run: pnpm --filter @code-lens/core build
       - run: pnpm --filter @code-lens/vanilla build
+      - run: pnpm --filter @code-lens/solid build
       - run: pnpm --filter @code-lens/demo build
       - uses: actions/upload-pages-artifact@v3
         with:

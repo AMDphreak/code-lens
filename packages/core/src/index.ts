@@ -25,3 +25,18 @@ export {
   listThemeIds,
   resolveTheme,
 } from "./themes.js";
+
+export type {
+  GlassLensTier,
+  ImplementationEntry,
+  ImplementationStatus,
+  ImplementationsRegistry,
+} from "./capabilities.js";
+
+export {
+  prefersReducedMotion,
+  shouldUseDomGlassLens,
+  supportsDomGlassLens,
+} from "./capabilities.js";
+
+export { parseImplementationsRegistry } from "./implementations.js";

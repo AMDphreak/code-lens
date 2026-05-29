@@ -1,0 +1,13 @@
+{
+  "name": "@code-lens/vue",
+  "version": "0.2.0",
+  "type": "module",
+  "description": "Vue 3 adapter for code-lens (planned)",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": { "build": "tsc -p tsconfig.json" },
+  "dependencies": { "@code-lens/core": "workspace:*" },
+  "peerDependencies": { "vue": "*" },
+  "devDependencies": { "typescript": "^5.0.0" }
+}

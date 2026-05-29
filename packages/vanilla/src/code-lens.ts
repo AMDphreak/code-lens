@@ -5,6 +5,7 @@ import {
   parseLensBlock,
   parseThemes,
   parseUi,
+  shouldUseDomGlassLens,
   type LensBlockDocument,
   type LensDefinition,
   type ThemesDocument,
@@ -42,9 +43,11 @@ export class CodeLensElement extends HTMLElement {
   #glassEl: HTMLDivElement | null = null;
   #toolbarEl: HTMLDivElement | null = null;
   #codeEl: HTMLPreElement | null = null;
+  #textProbe: HTMLSpanElement | null = null;
   #tabButtons: HTMLButtonElement[] = [];
   #touchStartX = 0;
   #touchDragging = false;
+  #glassEnabled = true;
 
   connectedCallback(): void {
     if (!this.#config) return;
@@ -101,6 +104,8 @@ export class CodeLensElement extends HTMLElement {
     const cfg = this.#config!;
     const lens = this.#displayLens();
     this.#applyTheme(this.#themeId(), lens.id);
+    this.#glassEnabled = shouldUseDomGlassLens();
+    this.classList.toggle("el-glass-disabled", !this.#glassEnabled);
 
     this.innerHTML = "";
     const root = document.createElement("div");
@@ -226,13 +231,37 @@ export class CodeLensElement extends HTMLElement {
     return `${lineIdx}:${tokenIdx}`;
   }
 
+  /** Measure monospace glyph width using the live code panel (not inside a clipped diff shell). */
+  #measureTextWidth(text: string): number {
+    if (!this.#codeEl || !text) return 0;
+    if (!this.#textProbe) {
+      this.#textProbe = document.createElement("span");
+      this.#textProbe.setAttribute("aria-hidden", "true");
+      this.#textProbe.style.cssText =
+        "position:absolute;visibility:hidden;white-space:pre;pointer-events:none;top:0;left:0;height:auto;width:auto;overflow:visible";
+      this.#codeEl.appendChild(this.#textProbe);
+    }
+    this.#textProbe.textContent = text;
+    const codeStyle = getComputedStyle(this.#codeEl);
+    this.#textProbe.style.font = codeStyle.font;
+    return this.#textProbe.offsetWidth;
+  }
+
+  #diffTokenWidth(text: string): number {
+    const pad = this.#config!.ui.animation.diffTokenPaddingPx;
+    return this.#measureTextWidth(text) + pad;
+  }
+
   #renderCode(): void {
     if (!this.#codeEl || !this.#config) return;
     const cfg = this.#config;
     const lensIdx = this.#displayIndex();
     const base = cfg.document.lenses[0].lines;
 
+    const probe = this.#textProbe;
     this.#codeEl.innerHTML = "";
+    if (probe) this.#codeEl.appendChild(probe);
+
     base.forEach((line, lineIdx) => {
       const row = document.createElement("div");
       row.className = "el-line";
@@ -274,12 +303,6 @@ export class CodeLensElement extends HTMLElement {
     const shell = document.createElement("span");
     shell.className = "el-diff";
 
-    const measure = document.createElement("span");
-    measure.style.cssText =
-      "position:absolute;visibility:hidden;white-space:pre;font:inherit;pointer-events:none";
-    measure.textContent = token.text;
-    shell.appendChild(measure);
-
     const inner = document.createElement("span");
     inner.className = "el-diff-inner";
 
@@ -310,26 +333,34 @@ export class CodeLensElement extends HTMLElement {
     shell.appendChild(inner);
 
     const ui = this.#config!.ui.animation;
-    const pad = ui.diffTokenPaddingPx;
     const staggerMs = ui.glassLensLineStaggerMs;
     const passMs = ui.glassLensPassMs;
     const lineDelay = lineIdx * staggerMs;
 
+    const incomingW = this.#diffTokenWidth(state.incoming);
+    const outgoingW = state.outgoing ? this.#diffTokenWidth(state.outgoing) : incomingW;
+    const storedW =
+      state.widthPx !== null && state.widthPx >= Math.min(incomingW, outgoingW)
+        ? state.widthPx
+        : null;
+
     if (state.outgoing !== null) {
       shell.classList.add("is-morphing");
-      const glassLens = document.createElement("span");
-      glassLens.className = "el-diff-glass-lens";
-      glassLens.setAttribute("aria-hidden", "true");
-      glassLens.style.setProperty("--el-glass-lens-delay", `${lineDelay}ms`);
-      shell.appendChild(glassLens);
+      if (this.#glassEnabled) {
+        const glassLens = document.createElement("span");
+        glassLens.className = "el-diff-glass-lens";
+        glassLens.setAttribute("aria-hidden", "true");
+        glassLens.style.setProperty("--el-glass-lens-delay", `${lineDelay}ms`);
+        shell.appendChild(glassLens);
+      }
       window.setTimeout(
         () => shell.classList.remove("is-morphing"),
         lineDelay + passMs + 80,
       );
     }
 
-    const fromW = state.widthPx ?? measure.offsetWidth + pad;
-    const toW = measure.offsetWidth + pad;
+    const fromW = state.outgoing !== null ? (storedW ?? outgoingW) : incomingW;
+    const toW = incomingW;
 
     shell.style.width = `${fromW}px`;
     requestAnimationFrame(() => {

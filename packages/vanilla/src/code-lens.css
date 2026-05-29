@@ -1,4 +1,5 @@
-:host {
+:host,
+code-lens {
   display: block;
   --el-width-ms: 420ms;
   --el-width-easing: cubic-bezier(0.16, 1, 0.3, 1);
@@ -217,6 +218,19 @@
     opacity: 0;
     transform: translateX(115%) scale(0.92);
   }
+}
+
+:host(.el-glass-disabled) .el-diff-glass-lens,
+:host(.el-glass-disabled) .el-glass,
+code-lens.el-glass-disabled .el-diff-glass-lens,
+code-lens.el-glass-disabled .el-glass {
+  display: none;
+}
+
+:host(.el-glass-disabled) .el-tab[aria-selected="true"],
+code-lens.el-glass-disabled .el-tab[aria-selected="true"] {
+  background: var(--el-diff-bg, rgba(0, 0, 0, 0.06));
+  border-color: var(--el-diff-border, rgba(0, 0, 0, 0.12));
 }
 
 @media (prefers-reduced-motion: reduce) {

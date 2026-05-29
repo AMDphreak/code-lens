@@ -1,0 +1,7 @@
+id = "code-lens"
+name = "code-lens"
+version = "0.1.0"
+schema_version = 1
+authors = ["Ryan Johnson <https://github.com/AMDphreak>"]
+description = "Pedagogical lens switching for code (didactic, schematic, contextual, role-labeled). Scaffold — see README."
+repository = "https://github.com/AMDphreak/code-lens"

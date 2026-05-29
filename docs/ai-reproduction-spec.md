@@ -74,9 +74,9 @@ For each slotted token when text changes:
 5. Cross-fade text: outgoing span opacity 1→0 (220ms), incoming 0→1 (220ms, 60ms delay).
 6. Stack outgoing/incoming in CSS grid same cell so width animation doesn't spill glyphs.
 
-### Literal glass lens over diff tokens (required for web)
+### Literal glass lens over diff tokens (when blur compositing is available)
 
-Simultaneously with steps 3–5, render a **glassmorphism lens** element inside each morphing diff shell:
+On any platform that supports blur (CSS `backdrop-filter`, native Material/blur APIs, `BackdropFilter`, etc.), simultaneously with steps 3–5 render a **glassmorphism lens** inside each morphing diff shell. **Probe at runtime** — use morph + cross-fade only when blur is unavailable. See [glass-lens-capabilities.md](./glass-lens-capabilities.md).
 
 - Pill-shaped overlay (~62% width of token), `border-radius: 999px`.
 - `backdrop-filter: blur(11px) saturate(1.35)`, semi-transparent white gradient, subtle border.

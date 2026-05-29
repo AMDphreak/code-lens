@@ -3,6 +3,8 @@
 !.gitignore
 !.github/
 !.github/**
+!examples/
+!examples/**
 !spec/
 !spec/**
 !docs/
@@ -13,6 +15,8 @@
 !demo/**
 !implementations/
 !implementations/**
+!extensions/
+!extensions/**
 !README.md
 !CHANGELOG.md
 !LICENSE

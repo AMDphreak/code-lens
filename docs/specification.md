@@ -14,6 +14,7 @@ Version 0.2 — portable across web, desktop, and mobile implementations.
 | `spec/examples/*.json5` | Example content (aligned tokens per lens) |
 | `spec/themes.json5` | Color schemes + per-lens panel backgrounds |
 | `spec/ui.json5` | Interaction model and animation constants |
+| `spec/implementations.json5` | Implementation registry + glass lens tiers |
 
 ## Lens IDs (normative)
 
@@ -32,19 +33,21 @@ Version 0.2 — portable across web, desktop, and mobile implementations.
 - Text cross-fade: `fadeMs` / `fadeDelayMs`
 - Inner clip: `overflow: hidden`
 
-### Glass lens sweep (web normative)
+### Glass lens sweep (when supported)
 
-- Pill overlay inside each morphing diff shell
+- Pill overlay inside each morphing diff shell when blur compositing works
 - Pass duration: `glassLensPassMs` (520ms)
 - Line stagger: `glassLensLineStaggerMs` (55ms) × line index
 - Runs **simultaneously** with width morph and cross-fade
+- **Fallback:** morph + cross-fade only — see [glass-lens-capabilities.md](./glass-lens-capabilities.md)
 
 ## Packages
 
 ```
-@code-lens/core     — parse spec, slot detection, theme resolution
+@code-lens/core     — parse spec, slot detection, theme resolution, blur probe
 @code-lens/vanilla  — <code-lens> web component
-@code-lens/solid    — SolidJS (WIP)
+@code-lens/solid    — SolidJS wrapper (wip)
+@code-lens/react    — planned (+ vue, svelte, angular, preact, lit)
 ```
 
-See [implementations/REGISTRY.md](../implementations/REGISTRY.md) for the full matrix.
+See [implementations/REGISTRY.md](../implementations/REGISTRY.md) and [glass-lens-capabilities.md](./glass-lens-capabilities.md) for the full matrix.

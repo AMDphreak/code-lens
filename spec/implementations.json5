@@ -1,0 +1,44 @@
+// Canonical implementation registry — consumed by demo site and docs.
+// Glass lens: implement the full sweep wherever the runtime supports blur compositing;
+// use "fallback" only when probing fails. See docs/glass-lens-capabilities.md.
+
+{
+  glassLensTiers: {
+    full: "DOM/CSS backdrop-filter — tab pill + diff-token lens sweep (normative reference)",
+    webview: "Full effect via embedded web component (Electron, Tauri, WebView2, Qt WebEngine, WebKitGTK)",
+    native: "Platform blur API (SwiftUI Material, Compose blur, Flutter BackdropFilter, RN blur module)",
+    fallback: "Width morph + cross-fade only — no blur compositing available",
+    none: "Semantic / inlay hints only — no inline morph UI",
+    planned: "Not yet implemented — tier assigned from expected runtime capability",
+  },
+
+  implementations: [
+    // Editors
+    { platform: "Editors", name: "VS Code", pkg: "extensions/vscode", path: "extensions/vscode", status: "wip", glassLens: "webview", notes: "Full UI in webview panel; editor buffer uses decorations" },
+    { platform: "Editors", name: "Zed (LSP path)", pkg: "extensions/zed", path: "extensions/zed", status: "planned", glassLens: "none", notes: "Inlay hints + external preview until overlay APIs exist" },
+    { platform: "Editors", name: "code-lens LSP", pkg: "extensions/lsp", path: "extensions/lsp", status: "planned", glassLens: "fallback", notes: "Shared server for LSP-native editors" },
+
+    // Web
+    { platform: "Web", name: "Vanilla JS (<code-lens>)", pkg: "@code-lens/vanilla", path: "packages/vanilla", status: "shipped", glassLens: "full" },
+    { platform: "Web", name: "SolidJS", pkg: "@code-lens/solid", path: "packages/solid", status: "wip", glassLens: "full", notes: "Wraps <code-lens>; probes backdrop-filter at runtime" },
+    { platform: "Web", name: "React", pkg: "@code-lens/react", path: "packages/react", status: "planned", glassLens: "full", notes: "Embed <code-lens> or port state machine" },
+    { platform: "Web", name: "Vue 3", pkg: "@code-lens/vue", path: "packages/vue", status: "planned", glassLens: "full" },
+    { platform: "Web", name: "Svelte", pkg: "@code-lens/svelte", path: "packages/svelte", status: "planned", glassLens: "full" },
+    { platform: "Web", name: "Angular", pkg: "@code-lens/angular", path: "packages/angular", status: "planned", glassLens: "full" },
+    { platform: "Web", name: "Preact", pkg: "@code-lens/preact", path: "packages/preact", status: "planned", glassLens: "full" },
+    { platform: "Web", name: "Lit", pkg: "@code-lens/lit", path: "packages/lit", status: "planned", glassLens: "full", notes: "Re-export or extend vanilla custom element" },
+
+    // Desktop
+    { platform: "Desktop", name: "Tauri + webview", pkg: "examples/tauri", path: "examples/tauri", status: "planned", glassLens: "webview" },
+    { platform: "Desktop", name: "Electron", pkg: "examples/electron", path: "examples/electron", status: "planned", glassLens: "webview" },
+    { platform: "Desktop", name: "Qt 6 / QML", pkg: "implementations/qt", path: "implementations/qt", status: "planned", glassLens: "native", notes: "WebEngine → webview tier; QML → FastBlur or shader sweep" },
+    { platform: "Desktop", name: "GTK 4", pkg: "implementations/gtk", path: "implementations/gtk", status: "planned", glassLens: "native", notes: "WebKitGTK → webview; GtkBlur or CSS in WebKit when available" },
+    { platform: "Desktop", name: ".NET MAUI", pkg: "implementations/maui", path: "implementations/maui", status: "planned", glassLens: "webview", notes: "BlazorWebView / WebView2 hosts vanilla component" },
+
+    // Mobile
+    { platform: "Mobile", name: "React Native", pkg: "@code-lens/react-native", path: "packages/react-native", status: "planned", glassLens: "native", notes: "expo-blur / native blur module for sweep; fallback cross-fade" },
+    { platform: "Mobile", name: "SwiftUI", pkg: "implementations/swiftui", path: "implementations/swiftui", status: "planned", glassLens: "native", notes: "Material + animated overlay on diff tokens" },
+    { platform: "Mobile", name: "Jetpack Compose", pkg: "implementations/compose", path: "implementations/compose", status: "planned", glassLens: "native", notes: "Modifier.blur + offset animation" },
+    { platform: "Mobile", name: "Flutter", pkg: "@code-lens/flutter", path: "packages/flutter", status: "planned", glassLens: "native", notes: "BackdropFilter + ClipRRect lens sweep" },
+  ],
+}

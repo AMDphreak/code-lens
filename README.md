@@ -12,8 +12,10 @@ Technical authors pick one naming convention per example. Readers encounter four
 
 ```bash
 pnpm install
-pnpm dev
+pnpm dev          # SolidJS + solid-ui GitHub Pages demo (port 5174)
 ```
+
+See [`demo/README.md`](demo/README.md) for the Pages site stack and build steps.
 
 ```html
 <script type="module">
@@ -45,16 +47,20 @@ Or use the custom element after `registerCodeLens()`:
 | [`spec/ui.json5`](spec/ui.json5) | Interaction + animation (including glass lens stagger) |
 
 - [Full specification](docs/specification.md)
+- [Glass lens capabilities](docs/glass-lens-capabilities.md)
+- [Editor integrations — VS Code & Zed](docs/editor-integrations.md)
 - [AI / LLM reproduction spec](docs/ai-reproduction-spec.md)
-- [Implementation registry](implementations/REGISTRY.md)
+- [Implementation registry](implementations/REGISTRY.md) · [`spec/implementations.json5`](spec/implementations.json5)
 
 ## Packages
 
 | Package | Status |
 |---------|--------|
-| `@code-lens/core` | Spec loader, themes, slot detection |
-| `@code-lens/vanilla` | `<code-lens>` web component |
-| `@code-lens/solid` | WIP |
+| `@code-lens/core` | Spec loader, themes, slot detection, blur probe |
+| `@code-lens/vanilla` | `<code-lens>` web component (shipped) |
+| `@code-lens/solid` | Solid wrapper (wip) — **used by GitHub Pages demo** |
+| `@code-lens/react`, `vue`, `svelte`, `angular`, `preact`, `lit` | Planned |
+| `@code-lens/react-native`, `@code-lens/flutter` | Planned (native glass lens) |
 
 ## License
 

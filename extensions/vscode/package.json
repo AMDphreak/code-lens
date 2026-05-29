@@ -1,0 +1,73 @@
+{
+  "name": "code-lens",
+  "displayName": "code-lens",
+  "description": "Pedagogical lens switching for code — didactic, schematic, contextual, role-labeled views of the same snippet.",
+  "version": "0.1.0",
+  "publisher": "amdphreak",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AMDphreak/code-lens"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other", "Education"],
+  "activationEvents": [
+    "onCommand:code-lens.openPreview",
+    "onCommand:code-lens.generateLenses",
+    "onCommand:code-lens.cycleLens"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "code-lens.openPreview",
+        "title": "code-lens: Open Preview Panel"
+      },
+      {
+        "command": "code-lens.generateLenses",
+        "title": "code-lens: Generate Lenses (AI)"
+      },
+      {
+        "command": "code-lens.cycleLens",
+        "title": "code-lens: Cycle Active Lens"
+      }
+    ],
+    "configuration": {
+      "title": "code-lens",
+      "properties": {
+        "code-lens.aiProvider": {
+          "type": "string",
+          "enum": ["none", "openai", "anthropic", "ollama"],
+          "default": "none",
+          "description": "AI provider for generating lens variants from real code."
+        },
+        "code-lens.aiModel": {
+          "type": "string",
+          "default": "",
+          "description": "Model id for the selected provider."
+        },
+        "code-lens.theme": {
+          "type": "string",
+          "default": "earth",
+          "description": "Color scheme id from spec/themes.json5"
+        },
+        "code-lens.decorationsInEditor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight slotted tokens in the active editor."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p tsconfig.json",
+    "watch": "tsc -watch -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.0.0"
+  }
+}

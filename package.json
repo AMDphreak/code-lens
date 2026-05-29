@@ -1,7 +1,7 @@
 {
   "name": "code-lens",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "code-lens — one snippet, multiple pedagogical naming conventions",
   "license": "MIT",
   "packageManager": "pnpm@10.29.1",

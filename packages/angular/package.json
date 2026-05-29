@@ -1,0 +1,13 @@
+{
+  "name": "@code-lens/angular",
+  "version": "0.2.0",
+  "type": "module",
+  "description": "Angular adapter for code-lens (planned)",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": { "build": "tsc -p tsconfig.json" },
+  "dependencies": { "@code-lens/core": "workspace:*" },
+  "peerDependencies": { "@angular/core": "*" },
+  "devDependencies": { "typescript": "^5.0.0" }
+}
