@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@code-lens/core": "workspace:*",
+    "@code-lens/css": "workspace:*",
     "@code-lens/solid": "workspace:*",
     "@code-lens/vanilla": "workspace:*",
     "@kobalte/core": "^0.13.11",

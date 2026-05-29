@@ -1,0 +1,29 @@
+[workspace]
+members = [
+  "code-lens-adapter",
+  "leptos",
+  "yew",
+  "dioxus",
+  "sycamore",
+  "dominator",
+  "seed",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/AMDphreak/code-lens"
+
+[workspace.dependencies]
+code-lens-adapter = { path = "code-lens-adapter" }
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = [
+  "HtmlElement",
+  "Element",
+  "Document",
+  "Window",
+  "Node",
+] }
+js-sys = "0.3"

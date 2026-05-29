@@ -1,0 +1,26 @@
+{
+  "name": "@code-lens/wasm-bridge",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "ESM entry for Rust/WASM apps (Leptos, Yew, Dioxus) to mount code-lens",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@code-lens/css": "workspace:*",
+    "@code-lens/vanilla": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

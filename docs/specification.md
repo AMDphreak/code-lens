@@ -12,7 +12,7 @@ Version 0.2 — portable across web, desktop, and mobile implementations.
 |------|---------|
 | `spec/lens-block.schema.json5` | Schema for example documents |
 | `spec/examples/*.json5` | Example content (aligned tokens per lens) |
-| `spec/themes.json5` | Color schemes + per-lens panel backgrounds |
+| `spec/themes.json5` | Color schemes — each theme includes **light** and **dark** appearance modes |
 | `spec/ui.json5` | Interaction model and animation constants |
 | `spec/implementations.json5` | Implementation registry + glass lens tiers |
 
@@ -33,21 +33,23 @@ Version 0.2 — portable across web, desktop, and mobile implementations.
 - Text cross-fade: `fadeMs` / `fadeDelayMs`
 - Inner clip: `overflow: hidden`
 
-### Glass lens sweep (when supported)
+### Block glass overlay (when supported)
 
-- Pill overlay inside each morphing diff shell when blur compositing works
-- Pass duration: `glassLensPassMs` (520ms)
-- Line stagger: `glassLensLineStaggerMs` (55ms) × line index
+- Single overlay over the code panel when blur compositing works (not per diff token)
+- Pass duration: `glassBlockPassMs` (520ms)
+- Diagonal gradient sheens + brief backdrop blur; no line stagger
 - Runs **simultaneously** with width morph and cross-fade
 - **Fallback:** morph + cross-fade only — see [glass-lens-capabilities.md](./glass-lens-capabilities.md)
 
 ## Packages
 
 ```
-@code-lens/core     — parse spec, slot detection, theme resolution, blur probe
-@code-lens/vanilla  — <code-lens> web component
-@code-lens/solid    — SolidJS wrapper (wip)
-@code-lens/react    — planned (+ vue, svelte, angular, preact, lit)
+spec/               — JSON5 (portable data)
+@code-lens/css      — stylesheet (presentation)
+@code-lens/tailwind — utility skin (planned)
+@code-lens/core     — parse spec, themes, blur probe
+@code-lens/vanilla  — <code-lens> web component (runtime)
+@code-lens/solid    — Solid host (adapter — mounts vanilla CE)
 ```
 
-See [implementations/REGISTRY.md](../implementations/REGISTRY.md) and [glass-lens-capabilities.md](./glass-lens-capabilities.md) for the full matrix.
+Framework adapters **embed** the web component; they do not re-implement behavior. See [ecosystem.md](./ecosystem.md).

@@ -8,7 +8,7 @@
       keyboard: true,
     },
     touch: {
-      preview: "swipe",
+      preview: "tabs",
       commit: "tap",
       swipeThresholdPx: 48,
       swipeRevealOpacity: 0.35,
@@ -23,9 +23,8 @@
     panelCrossfadeMs: 200,
     diffTokenPaddingPx: 4,
     diffTokenRadiusPx: 3,
-    // Literal glass lens sweep over each diff token during morph
-    glassLensPassMs: 520,
-    glassLensLineStaggerMs: 55,
+    // Block-wide glass pass when switching lenses (single layer over code panel)
+    glassBlockPassMs: 520,
   },
   layout: {
     tabMinHeightPx: 28,

@@ -11,7 +11,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./code-lens.css": "./dist/code-lens.css"
+    "./code-lens.css": "./dist/code-lens.css",
+    "./adapter": {
+      "types": "./dist/adapter.d.ts",
+      "import": "./dist/adapter.js"
+    }
   },
   "files": ["dist"],
   "scripts": {

@@ -19,6 +19,16 @@ export {
   resolveToken,
 } from "./parse.js";
 
+export type {
+  AppearancePreference,
+  EffectiveAppearance,
+} from "./appearance.js";
+
+export {
+  onSystemAppearanceChange,
+  resolveEffectiveAppearance,
+} from "./appearance.js";
+
 export {
   applyThemeCssVars,
   lensColors,
@@ -27,6 +37,7 @@ export {
 } from "./themes.js";
 
 export type {
+  DeliveryLayer,
   GlassLensTier,
   ImplementationEntry,
   ImplementationStatus,

@@ -58,10 +58,11 @@ Compute variable slots: any `slot` whose `text` differs across lenses.
 
 ### Mobile (pointer coarse)
 
-- Horizontal swipe on code area cycles lenses with before/after reveal feel.
-- Show ghost overlay at ~35% opacity during drag.
-- On `touchend`, commit current preview lens.
-- Show hint text: "Swipe code to preview lenses".
+- **Tap lens tabs** to switch lenses (`touch.preview: "tabs"`). Do not bind swipe to the code panel — keep code selectable for copy/paste.
+- Larger tab hit targets (`tabMinHeightPx` from spec).
+- Hint text: "Tap lens tabs to switch — code is selectable".
+
+Optional legacy mode: `touch.preview: "swipe"` enables horizontal swipe on the code area (not recommended when copy matters).
 
 ## Diff token animation (required)
 
@@ -74,16 +75,16 @@ For each slotted token when text changes:
 5. Cross-fade text: outgoing span opacity 1→0 (220ms), incoming 0→1 (220ms, 60ms delay).
 6. Stack outgoing/incoming in CSS grid same cell so width animation doesn't spill glyphs.
 
-### Literal glass lens over diff tokens (when blur compositing is available)
+### Block glass overlay (when blur compositing is available)
 
-On any platform that supports blur (CSS `backdrop-filter`, native Material/blur APIs, `BackdropFilter`, etc.), simultaneously with steps 3–5 render a **glassmorphism lens** inside each morphing diff shell. **Probe at runtime** — use morph + cross-fade only when blur is unavailable. See [glass-lens-capabilities.md](./glass-lens-capabilities.md).
+On any platform that supports blur (CSS `backdrop-filter`, native Material/blur APIs, `BackdropFilter`, etc.), simultaneously with steps 3–5 render a **single block-wide glass layer** over the code panel (not per-token). **Probe at runtime** — use morph + cross-fade only when blur is unavailable. See [glass-lens-capabilities.md](./glass-lens-capabilities.md).
 
-- Pill-shaped overlay (~62% width of token), `border-radius: 999px`.
-- `backdrop-filter: blur(11px) saturate(1.35)`, semi-transparent white gradient, subtle border.
-- Animate **translateX** from `-115%` → `+115%` over `glassLensPassMs` (520ms default).
-- **Stagger by line**: `animation-delay = lineIndex × glassLensLineStaggerMs` (55ms default). Line 0 starts immediately; each subsequent code line's diff tokens start later.
-- Runs in parallel with width morph and text cross-fade — all three must be visible together.
-- Honor `prefers-reduced-motion`: hide glass lens, shorten width transition.
+- One overlay (`.el-code-glass`) covers the full code panel during lens switches.
+- Three diagonal gradient sheens sweep in opposing directions to simulate light on rotating glass; a brief `backdrop-filter` blur pass runs in parallel.
+- Duration: `glassBlockPassMs` (520ms default). **No line stagger** — the entire panel animates as one layer.
+- `mix-blend-mode: soft-light` and `pointer-events: none` keep syntax colors readable and text selectable underneath.
+- Runs in parallel with width morph and text cross-fade.
+- Honor `prefers-reduced-motion`: hide block glass, shorten width transition.
 
 Non-slotted tokens: swap text instantly, syntax color by `kind`.
 
@@ -134,7 +135,8 @@ onTouchEnd(): committedIndex = displayIndex; previewIndex = null
 - [ ] Panel background changes per lens
 - [ ] Six themes selectable
 - [ ] Hover preview + click commit on desktop
-- [ ] Swipe on touch
+- [ ] Tap lens tabs on touch (code panel stays selectable)
+- [ ] `appearance="auto|light|dark"` tints chrome + syntax (`themes.json5` v2 light/dark modes)
 - [ ] Glass pill tracks active/hovered tab
-- [ ] Diff tokens animate width + cross-fade + **glass lens sweep** with per-line stagger
+- [ ] Diff tokens animate width + cross-fade; **block glass sweep** over code panel on lens change
 - [ ] Loads JSON5 spec without hardcoding example text

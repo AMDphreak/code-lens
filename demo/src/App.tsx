@@ -13,10 +13,15 @@ import { DemoSection } from "~/components/DemoSection";
 import { ImplementationsTable } from "~/components/ImplementationsTable";
 import { LensComparisonTable } from "~/components/LensComparisonTable";
 import { aiSpecPreview, NAV, SPEC_FILES, themes } from "~/data";
+import { getStoredColorScheme } from "~/lib/color-scheme";
+import { ColorSchemeProvider, createColorSchemeStore } from "~/lib/color-scheme-context";
+
+const colorScheme = createColorSchemeStore(getStoredColorScheme());
 
 export default function App() {
   return (
-    <div class="min-h-screen">
+    <ColorSchemeProvider store={colorScheme}>
+      <div class="min-h-screen">
       <header class="border-b">
         <div class="container max-w-3xl space-y-4 py-10">
           <div class="flex items-start justify-between gap-4">
@@ -166,6 +171,7 @@ export default function App() {
           </a>
         </p>
       </footer>
-    </div>
+      </div>
+    </ColorSchemeProvider>
   );
 }

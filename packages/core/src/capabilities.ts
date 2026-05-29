@@ -9,12 +9,23 @@ export type GlassLensTier =
 
 export type ImplementationStatus = "shipped" | "wip" | "planned";
 
+/** How this row fits the delivery stack — see docs/ecosystem.md */
+export type DeliveryLayer =
+  | "spec"
+  | "css"
+  | "tailwind"
+  | "runtime"
+  | "adapter"
+  | "editor"
+  | "native";
+
 export interface ImplementationEntry {
   platform: string;
   name: string;
   pkg: string;
   path: string;
   status: ImplementationStatus;
+  delivery: DeliveryLayer;
   glassLens: GlassLensTier;
   notes?: string;
 }

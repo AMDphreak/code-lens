@@ -1,68 +1,134 @@
-// Each theme assigns a distinct panel background per lens type.
-// Implementations MUST tint the code panel (or full block body) with lens.panel.
+// Each theme assigns distinct panel backgrounds per lens type, in light and dark appearance.
+// Implementations MUST tint the code panel with lens.panel for the active appearance mode.
 {
-  version: 1,
+  version: 2,
   defaultTheme: "earth",
   themes: {
     tropical: {
       label: "Tropical",
-      lenses: {
-        didactic: { panel: "#FFF0EB", diff: "#FFD4C4", diffBorder: "#FF9B7A", glass: "rgba(255,155,122,0.18)" },
-        schematic: { panel: "#E8FBF8", diff: "#A8EDE4", diffBorder: "#3CB8A8", glass: "rgba(60,184,168,0.18)" },
-        contextual: { panel: "#E5F5E0", diff: "#B8E8A8", diffBorder: "#5BA848", glass: "rgba(91,168,72,0.18)" },
-        role: { panel: "#FFF8E7", diff: "#FFE4A8", diffBorder: "#E8A830", glass: "rgba(232,168,48,0.18)" },
+      light: {
+        lenses: {
+          didactic: { panel: "#FFF0EB", diff: "#FFD4C4", diffBorder: "#FF9B7A", glass: "rgba(255,155,122,0.18)" },
+          schematic: { panel: "#E8FBF8", diff: "#A8EDE4", diffBorder: "#3CB8A8", glass: "rgba(60,184,168,0.18)" },
+          contextual: { panel: "#E5F5E0", diff: "#B8E8A8", diffBorder: "#5BA848", glass: "rgba(91,168,72,0.18)" },
+          role: { panel: "#FFF8E7", diff: "#FFE4A8", diffBorder: "#E8A830", glass: "rgba(232,168,48,0.18)" },
+        },
+        chrome: { codeSurface: "#FFFFFF", toolbar: "#F5FAF9", border: "#C8E6E0", text: "#1A2E28" },
       },
-      chrome: { codeSurface: "#FFFFFF", toolbar: "#F5FAF9", border: "#C8E6E0", text: "#1A2E28" },
+      dark: {
+        lenses: {
+          didactic: { panel: "#2A201C", diff: "#5A3A30", diffBorder: "#FF9B7A", glass: "rgba(255,155,122,0.24)" },
+          schematic: { panel: "#1A2826", diff: "#2A5048", diffBorder: "#3CB8A8", glass: "rgba(60,184,168,0.24)" },
+          contextual: { panel: "#1A2618", diff: "#2A5030", diffBorder: "#5BA848", glass: "rgba(91,168,72,0.24)" },
+          role: { panel: "#2A2418", diff: "#5A4828", diffBorder: "#E8A830", glass: "rgba(232,168,48,0.24)" },
+        },
+        chrome: { codeSurface: "#101816", toolbar: "#161E1C", border: "#2A4038", text: "#E0F0EC" },
+      },
     },
     earth: {
       label: "Earth tones",
-      lenses: {
-        didactic: { panel: "#F3EBE4", diff: "#DCC8B8", diffBorder: "#A67C5B", glass: "rgba(166,124,91,0.15)" },
-        schematic: { panel: "#EBF0E8", diff: "#C5D8BC", diffBorder: "#6B8F5E", glass: "rgba(107,143,94,0.15)" },
-        contextual: { panel: "#E8EEF0", diff: "#B8CCD8", diffBorder: "#5B7A8F", glass: "rgba(91,122,143,0.15)" },
-        role: { panel: "#EDE8E4", diff: "#D4C8BC", diffBorder: "#8F735B", glass: "rgba(143,115,91,0.15)" },
+      light: {
+        lenses: {
+          didactic: { panel: "#F3EBE4", diff: "#DCC8B8", diffBorder: "#A67C5B", glass: "rgba(166,124,91,0.15)" },
+          schematic: { panel: "#EBF0E8", diff: "#C5D8BC", diffBorder: "#6B8F5E", glass: "rgba(107,143,94,0.15)" },
+          contextual: { panel: "#E8EEF0", diff: "#B8CCD8", diffBorder: "#5B7A8F", glass: "rgba(91,122,143,0.15)" },
+          role: { panel: "#EDE8E4", diff: "#D4C8BC", diffBorder: "#8F735B", glass: "rgba(143,115,91,0.15)" },
+        },
+        chrome: { codeSurface: "#FAFAF8", toolbar: "#F0EFEC", border: "#D4D0C8", text: "#2C2824" },
       },
-      chrome: { codeSurface: "#FAFAF8", toolbar: "#F0EFEC", border: "#D4D0C8", text: "#2C2824" },
+      dark: {
+        lenses: {
+          didactic: { panel: "#2A2420", diff: "#4A3D34", diffBorder: "#A67C5B", glass: "rgba(166,124,91,0.22)" },
+          schematic: { panel: "#222820", diff: "#3A4A34", diffBorder: "#6B8F5E", glass: "rgba(107,143,94,0.22)" },
+          contextual: { panel: "#202428", diff: "#344450", diffBorder: "#5B7A8F", glass: "rgba(91,122,143,0.22)" },
+          role: { panel: "#282420", diff: "#443C34", diffBorder: "#8F735B", glass: "rgba(143,115,91,0.22)" },
+        },
+        chrome: { codeSurface: "#141210", toolbar: "#1C1916", border: "#3A3530", text: "#E8E4DE" },
+      },
     },
     earthenware: {
       label: "Earthenware",
-      lenses: {
-        didactic: { panel: "#F5EAE3", diff: "#E0C4B0", diffBorder: "#B8734A", glass: "rgba(184,115,74,0.16)" },
-        schematic: { panel: "#EAE8E0", diff: "#CFCAB8", diffBorder: "#8A8470", glass: "rgba(138,132,112,0.16)" },
-        contextual: { panel: "#E6EBF0", diff: "#B8C8DC", diffBorder: "#4A6A8F", glass: "rgba(74,106,143,0.16)" },
-        role: { panel: "#F0EBE0", diff: "#DCCFB0", diffBorder: "#A89050", glass: "rgba(168,144,80,0.16)" },
+      light: {
+        lenses: {
+          didactic: { panel: "#F5EAE3", diff: "#E0C4B0", diffBorder: "#B8734A", glass: "rgba(184,115,74,0.16)" },
+          schematic: { panel: "#EAE8E0", diff: "#CFCAB8", diffBorder: "#8A8470", glass: "rgba(138,132,112,0.16)" },
+          contextual: { panel: "#E6EBF0", diff: "#B8C8DC", diffBorder: "#4A6A8F", glass: "rgba(74,106,143,0.16)" },
+          role: { panel: "#F0EBE0", diff: "#DCCFB0", diffBorder: "#A89050", glass: "rgba(168,144,80,0.16)" },
+        },
+        chrome: { codeSurface: "#FDFBF7", toolbar: "#F2EFE8", border: "#D8D0C0", text: "#3A3428" },
       },
-      chrome: { codeSurface: "#FDFBF7", toolbar: "#F2EFE8", border: "#D8D0C0", text: "#3A3428" },
+      dark: {
+        lenses: {
+          didactic: { panel: "#2A221C", diff: "#503828", diffBorder: "#B8734A", glass: "rgba(184,115,74,0.22)" },
+          schematic: { panel: "#262420", diff: "#444038", diffBorder: "#8A8470", glass: "rgba(138,132,112,0.22)" },
+          contextual: { panel: "#202428", diff: "#344058", diffBorder: "#4A6A8F", glass: "rgba(74,106,143,0.22)" },
+          role: { panel: "#28241C", diff: "#484030", diffBorder: "#A89050", glass: "rgba(168,144,80,0.22)" },
+        },
+        chrome: { codeSurface: "#141210", toolbar: "#1A1814", border: "#3A3830", text: "#EDE8E0" },
+      },
     },
     patina: {
       label: "Patina",
-      lenses: {
-        didactic: { panel: "#E4F0EE", diff: "#A8D8D0", diffBorder: "#3A9088", glass: "rgba(58,144,136,0.18)" },
-        schematic: { panel: "#F0EBE4", diff: "#D4C4A8", diffBorder: "#8F7350", glass: "rgba(143,115,80,0.16)" },
-        contextual: { panel: "#F0E8E4", diff: "#D8B8A8", diffBorder: "#8F5B4A", glass: "rgba(143,91,74,0.16)" },
-        role: { panel: "#E8EDE8", diff: "#B8C8B8", diffBorder: "#5A7058", glass: "rgba(90,112,88,0.16)" },
+      light: {
+        lenses: {
+          didactic: { panel: "#E4F0EE", diff: "#A8D8D0", diffBorder: "#3A9088", glass: "rgba(58,144,136,0.18)" },
+          schematic: { panel: "#F0EBE4", diff: "#D4C4A8", diffBorder: "#8F7350", glass: "rgba(143,115,80,0.16)" },
+          contextual: { panel: "#F0E8E4", diff: "#D8B8A8", diffBorder: "#8F5B4A", glass: "rgba(143,91,74,0.16)" },
+          role: { panel: "#E8EDE8", diff: "#B8C8B8", diffBorder: "#5A7058", glass: "rgba(90,112,88,0.16)" },
+        },
+        chrome: { codeSurface: "#F8FAF9", toolbar: "#EEF2F0", border: "#B8C8C4", text: "#1E2826" },
       },
-      chrome: { codeSurface: "#F8FAF9", toolbar: "#EEF2F0", border: "#B8C8C4", text: "#1E2826" },
+      dark: {
+        lenses: {
+          didactic: { panel: "#1A2826", diff: "#2A5048", diffBorder: "#3A9088", glass: "rgba(58,144,136,0.24)" },
+          schematic: { panel: "#282420", diff: "#443C30", diffBorder: "#8F7350", glass: "rgba(143,115,80,0.22)" },
+          contextual: { panel: "#282018", diff: "#503830", diffBorder: "#8F5B4A", glass: "rgba(143,91,74,0.22)" },
+          role: { panel: "#222820", diff: "#3A4838", diffBorder: "#5A7058", glass: "rgba(90,112,88,0.22)" },
+        },
+        chrome: { codeSurface: "#101412", toolbar: "#161A18", border: "#2A3834", text: "#E0ECE8" },
+      },
     },
     fruits: {
       label: "Fruits",
-      lenses: {
-        didactic: { panel: "#FCE8EE", diff: "#F0A8C0", diffBorder: "#C84878", glass: "rgba(200,72,120,0.16)" },
-        schematic: { panel: "#ECE8F5", diff: "#B8A8E0", diffBorder: "#6848A8", glass: "rgba(104,72,168,0.16)" },
-        contextual: { panel: "#E8F5E8", diff: "#98D898", diffBorder: "#38A838", glass: "rgba(56,168,56,0.16)" },
-        role: { panel: "#F5F3E8", diff: "#E8DC98", diffBorder: "#C8A830", glass: "rgba(200,168,48,0.16)" },
+      light: {
+        lenses: {
+          didactic: { panel: "#FCE8EE", diff: "#F0A8C0", diffBorder: "#C84878", glass: "rgba(200,72,120,0.16)" },
+          schematic: { panel: "#ECE8F5", diff: "#B8A8E0", diffBorder: "#6848A8", glass: "rgba(104,72,168,0.16)" },
+          contextual: { panel: "#E8F5E8", diff: "#98D898", diffBorder: "#38A838", glass: "rgba(56,168,56,0.16)" },
+          role: { panel: "#F5F3E8", diff: "#E8DC98", diffBorder: "#C8A830", glass: "rgba(200,168,48,0.16)" },
+        },
+        chrome: { codeSurface: "#FFFFFF", toolbar: "#F8F6FA", border: "#D8D0E0", text: "#28242E" },
       },
-      chrome: { codeSurface: "#FFFFFF", toolbar: "#F8F6FA", border: "#D8D0E0", text: "#28242E" },
+      dark: {
+        lenses: {
+          didactic: { panel: "#2A1820", diff: "#502838", diffBorder: "#C84878", glass: "rgba(200,72,120,0.24)" },
+          schematic: { panel: "#221A2A", diff: "#403060", diffBorder: "#6848A8", glass: "rgba(104,72,168,0.24)" },
+          contextual: { panel: "#182818", diff: "#285028", diffBorder: "#38A838", glass: "rgba(56,168,56,0.24)" },
+          role: { panel: "#282418", diff: "#504828", diffBorder: "#C8A830", glass: "rgba(200,168,48,0.24)" },
+        },
+        chrome: { codeSurface: "#121016", toolbar: "#18161C", border: "#342E40", text: "#ECE8F0" },
+      },
     },
     desert: {
       label: "Desert",
-      lenses: {
-        didactic: { panel: "#F5EDE3", diff: "#E0C8A0", diffBorder: "#B89050", glass: "rgba(184,144,80,0.16)" },
-        schematic: { panel: "#E8EDF2", diff: "#A8B8D0", diffBorder: "#5070A0", glass: "rgba(80,112,160,0.16)" },
-        contextual: { panel: "#E5F0E5", diff: "#98C898", diffBorder: "#488848", glass: "rgba(72,136,72,0.16)" },
-        role: { panel: "#F0E8E0", diff: "#D8C0A0", diffBorder: "#A07848", glass: "rgba(160,120,72,0.16)" },
+      light: {
+        lenses: {
+          didactic: { panel: "#F5EDE3", diff: "#E0C8A0", diffBorder: "#B89050", glass: "rgba(184,144,80,0.16)" },
+          schematic: { panel: "#E8EDF2", diff: "#A8B8D0", diffBorder: "#5070A0", glass: "rgba(80,112,160,0.16)" },
+          contextual: { panel: "#E5F0E5", diff: "#98C898", diffBorder: "#488848", glass: "rgba(72,136,72,0.16)" },
+          role: { panel: "#F0E8E0", diff: "#D8C0A0", diffBorder: "#A07848", glass: "rgba(160,120,72,0.16)" },
+        },
+        chrome: { codeSurface: "#FDFAF5", toolbar: "#F0EBE4", border: "#D0C4B4", text: "#3A3228" },
       },
-      chrome: { codeSurface: "#FDFAF5", toolbar: "#F0EBE4", border: "#D0C4B4", text: "#3A3228" },
+      dark: {
+        lenses: {
+          didactic: { panel: "#2A2418", diff: "#504028", diffBorder: "#B89050", glass: "rgba(184,144,80,0.22)" },
+          schematic: { panel: "#202428", diff: "#344058", diffBorder: "#5070A0", glass: "rgba(80,112,160,0.22)" },
+          contextual: { panel: "#1E281E", diff: "#304830", diffBorder: "#488848", glass: "rgba(72,136,72,0.22)" },
+          role: { panel: "#282018", diff: "#483828", diffBorder: "#A07848", glass: "rgba(160,120,72,0.22)" },
+        },
+        chrome: { codeSurface: "#141210", toolbar: "#1A1814", border: "#3A3830", text: "#EDE6DC" },
+      },
     },
   },
   syntax: {
@@ -76,5 +142,17 @@
     builtin: "#B84858",
     macro: "#B84858",
     operator: "#504C48",
+  },
+  syntaxDark: {
+    keyword: "#C4A8E8",
+    type: "#6CB4D8",
+    identifier: "#E8E4DE",
+    string: "#7BC896",
+    comment: "#8A8478",
+    punctuation: "#A8A4A0",
+    number: "#D8A860",
+    builtin: "#E87888",
+    macro: "#E87888",
+    operator: "#A8A4A0",
   },
 }

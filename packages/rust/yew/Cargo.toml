@@ -1,0 +1,11 @@
+[package]
+name = "code-lens-yew"
+description = "Yew component for code-lens"
+readme = "README.md"
+
+[dependencies]
+code-lens-adapter = { workspace = true }
+yew = { version = "0.21", features = ["csr"] }
+gloo-utils = "0.2"
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }

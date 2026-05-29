@@ -1,22 +1,22 @@
 # @code-lens/react
 
-**Status:** planned
-
-React adapter for [code-lens](https://github.com/AMDphreak/code-lens).
-
-## Glass lens
-
-Use `@code-lens/vanilla` inside a `useRef` host — full tab pill + diff-token sweep when `shouldUseDomGlassLens()` is true. See [docs/glass-lens-capabilities.md](../../docs/glass-lens-capabilities.md).
-
-## Planned API
+**Placeholder adapter.** Do not port the state machine — embed `@code-lens/vanilla`:
 
 ```tsx
-import { CodeLens } from "@code-lens/react";
-import block from "../../spec/examples/zig-namespace.json5";
+import { useEffect, useRef } from "react";
+import { createCodeLens, registerCodeLens } from "@code-lens/vanilla";
+import "@code-lens/css";
 
-<CodeLens document={block} themes={themes} ui={ui} themeId="earth" />
+export function CodeLens(props: CodeLensProps) {
+  const host = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    registerCodeLens();
+    const el = createCodeLens({ ...props });
+    host.current?.appendChild(el);
+    return () => el.remove();
+  }, [props]);
+  return <div ref={host} />;
+}
 ```
 
-## Registry
-
-[`spec/implementations.json5`](../../spec/implementations.json5)
+Copy the pattern from `@code-lens/solid`. See [docs/ecosystem.md](../../docs/ecosystem.md).

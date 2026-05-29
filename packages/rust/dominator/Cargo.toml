@@ -1,0 +1,11 @@
+[package]
+name = "code-lens-dominator"
+description = "Dominator component for code-lens"
+readme = "README.md"
+
+[dependencies]
+code-lens-adapter = { workspace = true }
+dominator = "0.5"
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }
+futures-signals = "0.3"

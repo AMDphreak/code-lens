@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { useColorScheme } from "~/lib/color-scheme-context";
 import { lensDocument, themes, ui } from "~/data";
 
 type DemoSectionProps = {
@@ -15,6 +16,7 @@ type DemoSectionProps = {
 };
 
 export function DemoSection(props: DemoSectionProps) {
+  const colorScheme = useColorScheme();
   const [themeId, setThemeId] = createSignal(props.themes.defaultTheme);
 
   return (
@@ -23,7 +25,7 @@ export function DemoSection(props: DemoSectionProps) {
         <h2 class="font-heading text-2xl font-semibold tracking-tight">Live demo</h2>
         <div class="flex items-center gap-2">
           <span class="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            Color scheme
+            Color theme
           </span>
           <Select
             value={themeId()}
@@ -45,14 +47,16 @@ export function DemoSection(props: DemoSectionProps) {
         </div>
       </div>
       <p class="text-sm text-muted-foreground">
-        Desktop: hover lens tabs (glass indicator slides). Touch: swipe the code panel. Each lens
-        uses a distinct panel background from the active color scheme.
+        Desktop: hover lens tabs to preview (glass indicator slides). Touch: tap lens tabs — the code
+        panel stays selectable for copy/paste. Panel tint and syntax follow the color theme;
+        light/dark appearance follows the header toggle (auto matches your system).
       </p>
       <CodeLens
         document={lensDocument}
         themes={themes}
         ui={ui}
         themeId={themeId()}
+        appearance={colorScheme.preference()}
         class="code-lens-demo"
       />
     </section>

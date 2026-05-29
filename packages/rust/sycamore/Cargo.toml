@@ -1,0 +1,10 @@
+[package]
+name = "code-lens-sycamore"
+description = "Sycamore component for code-lens"
+readme = "README.md"
+
+[dependencies]
+code-lens-adapter = { workspace = true }
+sycamore = { version = "0.9", features = ["suspense"] }
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }

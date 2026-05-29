@@ -1,5 +1,5 @@
 import JSON5 from "json5";
-import type { GlassLensTier, ImplementationEntry, ImplementationsRegistry } from "./capabilities.js";
+import type { DeliveryLayer, GlassLensTier, ImplementationEntry, ImplementationsRegistry } from "./capabilities.js";
 
 const GLASS_TIER_IDS: GlassLensTier[] = [
   "full",
@@ -32,4 +32,4 @@ export function parseImplementationsRegistry(source: string): ImplementationsReg
   };
 }
 
-export type { GlassLensTier, ImplementationEntry, ImplementationsRegistry };
+export type { GlassLensTier, DeliveryLayer, ImplementationEntry, ImplementationsRegistry };

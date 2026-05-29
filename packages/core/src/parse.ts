@@ -13,11 +13,22 @@ export function parseLensBlock(source: string): LensBlockDocument {
 }
 
 export function parseThemes(source: string): ThemesDocument {
-  return JSON5.parse(source) as ThemesDocument;
+  const doc = JSON5.parse(source) as ThemesDocument;
+  if (doc.version !== 2) {
+    throw new Error(`Unsupported themes version: ${doc.version} (expected 2 with light/dark modes)`);
+  }
+  if (!doc.syntaxDark) {
+    throw new Error("themes document requires syntaxDark");
+  }
+  return doc;
 }
 
 export function parseUi(source: string): UiDocument {
-  return JSON5.parse(source) as UiDocument;
+  const doc = JSON5.parse(source) as UiDocument;
+  if (doc.animation.glassBlockPassMs === undefined) {
+    doc.animation.glassBlockPassMs = doc.animation.glassLensPassMs ?? 520;
+  }
+  return doc;
 }
 
 function validateLensBlock(doc: LensBlockDocument): void {

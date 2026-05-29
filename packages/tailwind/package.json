@@ -1,0 +1,11 @@
+{
+  "name": "@code-lens/tailwind",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "code-lens Tailwind skin (planned) — same runtime as @code-lens/vanilla",
+  "license": "MIT",
+  "exports": {},
+  "scripts": {
+    "build": "node -e \"console.log('@code-lens/tailwind: not yet implemented — see README')\""
+  }
+}

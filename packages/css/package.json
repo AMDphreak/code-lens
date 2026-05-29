@@ -1,0 +1,15 @@
+{
+  "name": "@code-lens/css",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "code-lens stylesheet (presentation layer — pair with @code-lens/vanilla for behavior)",
+  "license": "MIT",
+  "exports": {
+    ".": "./dist/code-lens.css",
+    "./code-lens.css": "./dist/code-lens.css"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "node ./scripts/copy-css.mjs"
+  }
+}

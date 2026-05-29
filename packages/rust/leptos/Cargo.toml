@@ -1,0 +1,10 @@
+[package]
+name = "code-lens-leptos"
+description = "Leptos component for code-lens (mounts @code-lens/vanilla via wasm-bridge)"
+readme = "README.md"
+
+[dependencies]
+code-lens-adapter = { workspace = true }
+leptos = { version = "0.7", default-features = false, features = ["csr"] }
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }

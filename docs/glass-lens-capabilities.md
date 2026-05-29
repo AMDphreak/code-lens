@@ -3,7 +3,7 @@
 The **glass lens** effect is two related animations:
 
 1. **Tab pill** — glassmorphism indicator sliding behind the active lens tab.
-2. **Diff-token sweep** — a blurred lens overlay passing across each morphing identifier during lens switches.
+2. **Block glass sweep** — diagonal gradient sheens and a brief blur pass over the entire code panel during lens switches.
 
 These are **not tied to a fixed list of frameworks**. Implement them on **any runtime that supports blur compositing**; otherwise use the documented fallback.
 
@@ -11,10 +11,10 @@ These are **not tied to a fixed list of frameworks**. Implement them on **any ru
 
 | Tier | When to use | Effect |
 |------|-------------|--------|
-| **full** | `backdrop-filter` / `-webkit-backdrop-filter` works | Tab pill + diff-token sweep (normative in `@code-lens/vanilla`) |
+| **full** | `backdrop-filter` / `-webkit-backdrop-filter` works | Tab pill + block glass sweep (normative in `@code-lens/vanilla`) |
 | **webview** | App embeds a DOM surface | Ship `@code-lens/vanilla` unchanged — Electron, Tauri, WebView2, Qt WebEngine, WebKitGTK |
-| **native** | Platform blur API, no DOM | Reproduce sweep with SwiftUI Material, Compose `blur`, Flutter `BackdropFilter`, RN blur module, Qt Quick blur |
-| **fallback** | No blur compositing | Keep width morph + text cross-fade; omit lens overlay |
+| **native** | Platform blur API, no DOM | Reproduce block sweep with layered gradients + blur on the code viewport (SwiftUI Material, Compose `blur`, Flutter `BackdropFilter`, RN blur module) |
+| **fallback** | No blur compositing | Keep width morph + text cross-fade; omit glass overlay |
 | **none** | Editor / hint-only integrations | Role labels without inline morph |
 
 Canonical registry rows and expected tiers: [`spec/implementations.json5`](../spec/implementations.json5).
@@ -27,7 +27,7 @@ Canonical registry rows and expected tiers: [`spec/implementations.json5`](../sp
 import { shouldUseDomGlassLens, supportsDomGlassLens } from "@code-lens/core";
 
 if (shouldUseDomGlassLens()) {
-  // append .el-diff-glass-lens, show .el-glass tab pill
+  // show .el-code-glass block overlay + .el-glass tab pill
 } else {
   // morph + cross-fade only
 }
@@ -44,18 +44,16 @@ When porting outside the DOM, map spec timings from `spec/ui.json5`:
 | Spec field | Use |
 |------------|-----|
 | `glassSlideMs` | Tab pill slide duration |
-| `glassLensPassMs` | Diff-token sweep duration |
-| `glassLensLineStaggerMs` | Delay multiplier × line index |
-| `glassBlurPx` | Blur radius for native APIs |
+| `glassBlockPassMs` | Block glass sweep duration |
+| `glassBlurPx` | Blur radius for native APIs (peak of blur pass) |
 
-Implement the sweep on **every platform where blur is available** — do not skip native mobile/desktop targets because the reference is web-only.
+Implement the block sweep on **every platform where blur is available** — do not skip native mobile/desktop targets because the reference is web-only.
 
 ## Web framework adapters
 
-React, Vue, Svelte, Angular, Preact, Lit, and Solid adapters should either:
+React, Vue, Svelte, Angular, Preact, Lit, and Solid should **embed** `<code-lens>` from `@code-lens/vanilla` (adapter layer). Only ship a separate port if embedding is impossible (e.g. SSR constraints).
 
-- **Embed** `<code-lens>` (fastest; full tier when blur works), or
-- **Port** the vanilla state machine and call the same probe/fallback rules.
+See [ecosystem.md](./ecosystem.md).
 
 ## Contributing
 

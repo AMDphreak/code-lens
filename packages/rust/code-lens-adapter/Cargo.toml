@@ -1,0 +1,18 @@
+[package]
+name = "code-lens-adapter"
+description = "Shared WASM helpers to mount @code-lens/vanilla from Rust web frameworks"
+readme = "README.md"
+
+[package.metadata.docs.rs]
+all-features = true
+
+[lib]
+crate-type = ["rlib"]
+
+[dependencies]
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }
+js-sys = { workspace = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"

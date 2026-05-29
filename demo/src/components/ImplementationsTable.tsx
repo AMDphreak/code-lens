@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import type { GlassLensTier, ImplementationStatus } from "@code-lens/core";
+import type { DeliveryLayer, GlassLensTier, ImplementationStatus } from "@code-lens/core";
 import { Badge } from "~/components/ui/badge";
 import {
   Table,
@@ -40,6 +40,7 @@ export function ImplementationsTable() {
             <TableHead>Platform</TableHead>
             <TableHead>Implementation</TableHead>
             <TableHead>Package</TableHead>
+            <TableHead>Delivery</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Glass lens</TableHead>
           </TableRow>
@@ -52,6 +53,11 @@ export function ImplementationsTable() {
                 <TableCell>{row.name}</TableCell>
                 <TableCell>
                   <code class="font-mono text-xs">{row.pkg}</code>
+                </TableCell>
+                <TableCell>
+                  <span class="font-mono text-xs capitalize text-muted-foreground">
+                    {row.delivery}
+                  </span>
                 </TableCell>
                 <TableCell>
                   <Badge variant={statusVariant(row.status)}>{row.status}</Badge>

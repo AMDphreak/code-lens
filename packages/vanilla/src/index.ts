@@ -1,6 +1,15 @@
 import { registerCodeLens } from "./code-lens.js";
 
 export {
+  attachCodeLens,
+  detachCodeLens,
+  ensureCodeLensRegistered,
+  patchCodeLensTheme,
+  syncCodeLensElement,
+  type CodeLensComponentProps,
+} from "./adapter.js";
+
+export {
   CodeLensElement,
   createCodeLens,
   createLensCodeBlock,

@@ -1,26 +1,21 @@
 # @code-lens/solid
 
-SolidJS wrapper for the `<code-lens>` web component.
-
-**Status:** wip · **Glass lens:** full (delegates to vanilla; runtime blur probe)
-
-## Usage
+**Adapter** — mounts the vanilla `<code-lens>` web component in a Solid app. Does not re-implement lens logic.
 
 ```tsx
-import { CodeLens, parseLensBlock, parseThemes, parseUi } from "@code-lens/solid";
-import blockSource from "./example.json5?raw";
+import { CodeLens } from "@code-lens/solid";
+import "@code-lens/css";
+import { lensDocument, themes, ui } from "./spec";
 
-const document = parseLensBlock(blockSource);
-const themes = parseThemes(themesSource);
-const ui = parseUi(uiSource);
-
-<CodeLens document={document} themes={themes} ui={ui} themeId="earth" />
+<CodeLens
+  document={lensDocument}
+  themes={themes}
+  ui={ui}
+  themeId="earth"
+  appearance="auto"
+/>
 ```
 
-## Build
+The GitHub Pages demo uses Solid + solid-ui for **page chrome** only; the lens block is still `@code-lens/vanilla` under the hood.
 
-```bash
-pnpm --filter @code-lens/solid build
-```
-
-Requires `@code-lens/vanilla` (peer-style workspace dependency).
+React / Vue / Svelte: embed `@code-lens/vanilla` the same way — see [docs/ecosystem.md](../../docs/ecosystem.md).

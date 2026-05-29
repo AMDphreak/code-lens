@@ -1,0 +1,10 @@
+[package]
+name = "code-lens-dioxus"
+description = "Dioxus component for code-lens"
+readme = "README.md"
+
+[dependencies]
+code-lens-adapter = { workspace = true }
+dioxus = { version = "0.6", features = ["web"] }
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }

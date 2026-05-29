@@ -2,7 +2,7 @@
   "name": "@code-lens/react",
   "version": "0.2.0",
   "type": "module",
-  "description": "React adapter for code-lens (planned)",
+  "description": "React component for code-lens",
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,12 +10,15 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@code-lens/core": "workspace:*"
+    "@code-lens/core": "workspace:*",
+    "@code-lens/vanilla": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0",
     "typescript": "^5.0.0"
   }
 }

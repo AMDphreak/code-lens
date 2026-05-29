@@ -2,10 +2,12 @@ import {
   applyThemeCssVars,
   collectVariableSlots,
   lensIndexById,
+  onSystemAppearanceChange,
   parseLensBlock,
   parseThemes,
   parseUi,
   shouldUseDomGlassLens,
+  type AppearancePreference,
   type LensBlockDocument,
   type LensDefinition,
   type ThemesDocument,
@@ -27,13 +29,14 @@ export type CodeLensConfig = {
   themes: ThemesDocument;
   ui: UiDocument;
   themeId?: string;
+  appearance?: AppearancePreference;
 };
 
 /** @deprecated Use CodeLensConfig */
 export type LensCodeBlockConfig = CodeLensConfig;
 
 export class CodeLensElement extends HTMLElement {
-  static observedAttributes = ["theme"];
+  static observedAttributes = ["theme", "appearance"];
 
   #config: CodeLensConfig | null = null;
   #committed = 0;
@@ -43,30 +46,67 @@ export class CodeLensElement extends HTMLElement {
   #glassEl: HTMLDivElement | null = null;
   #toolbarEl: HTMLDivElement | null = null;
   #codeEl: HTMLPreElement | null = null;
+  #codeGlassEl: HTMLDivElement | null = null;
   #textProbe: HTMLSpanElement | null = null;
   #tabButtons: HTMLButtonElement[] = [];
-  #touchStartX = 0;
-  #touchDragging = false;
   #glassEnabled = true;
+  #appearanceCleanup: (() => void) | null = null;
+  #lastRenderedLensIndex: number | null = null;
+
+  #touchPreviewIsSwipe(): boolean {
+    return this.#config?.ui.interaction.touch.preview === "swipe";
+  }
 
   connectedCallback(): void {
-    if (!this.#config) return;
-    this.#render();
+    this.#appearanceCleanup?.();
+    this.#appearanceCleanup = onSystemAppearanceChange(
+      () => this.#appearancePreference(),
+      () => this.#onAppearanceChange(),
+    );
+    if (this.#config) this.#render();
+  }
+
+  disconnectedCallback(): void {
+    this.#appearanceCleanup?.();
+    this.#appearanceCleanup = null;
   }
 
   configure(config: CodeLensConfig): void {
     this.#config = config;
+    if (config.appearance) this.setAttribute("appearance", config.appearance);
+    if (config.themeId) this.setAttribute("theme", config.themeId);
     this.#variableSlots = collectVariableSlots(config.document.lenses);
     this.#committed = 0;
     this.#preview = null;
     if (this.isConnected) this.#render();
   }
 
+  /** Re-apply theme + syntax for current appearance (after attribute or config change). */
+  refreshAppearance(): void {
+    this.#onAppearanceChange();
+  }
+
   attributeChangedCallback(name: string, _old: string | null, value: string | null): void {
-    if (name === "theme" && value && this.#config) {
+    if (!this.#config) return;
+    if (name === "theme" && value) {
       this.#applyTheme(value, this.#displayLens().id);
       this.#renderCode();
     }
+    if (name === "appearance") {
+      this.#onAppearanceChange();
+    }
+  }
+
+  #onAppearanceChange(): void {
+    if (!this.#config) return;
+    this.#applyTheme(this.#themeId(), this.#displayLens().id);
+    this.#renderCode();
+  }
+
+  #appearancePreference(): AppearancePreference {
+    const attr = this.getAttribute("appearance");
+    if (attr === "light" || attr === "dark" || attr === "auto") return attr;
+    return this.#config?.appearance ?? "auto";
   }
 
   #displayIndex(): number {
@@ -82,18 +122,18 @@ export class CodeLensElement extends HTMLElement {
   }
 
   #applyTheme(themeId: string, lensId: string): void {
-    applyThemeCssVars(this, this.#config!.themes, themeId, lensId);
+    applyThemeCssVars(this, this.#config!.themes, themeId, lensId, this.#appearancePreference());
     const ui = this.#config!.ui;
     this.style.setProperty("--el-width-ms", `${ui.animation.widthMs}ms`);
     this.style.setProperty("--el-width-easing", ui.animation.widthEasing);
     this.style.setProperty("--el-fade-ms", `${ui.animation.fadeMs}ms`);
     this.style.setProperty("--el-glass-ms", `${ui.animation.glassSlideMs}ms`);
-    this.style.setProperty("--el-glass-lens-ms", `${ui.animation.glassLensPassMs}ms`);
     this.style.setProperty(
-      "--el-glass-lens-stagger",
-      `${ui.animation.glassLensLineStaggerMs}ms`,
+      "--el-glass-block-ms",
+      `${ui.animation.glassBlockPassMs}ms`,
     );
     this.style.setProperty("--el-code-font", ui.layout.codeFontFamily);
+    this.style.setProperty("--el-tab-min-height", `${ui.layout.tabMinHeightPx}px`);
     this.style.setProperty(
       "--el-swipe-opacity",
       String(this.#config!.ui.interaction.touch.swipeRevealOpacity),
@@ -103,6 +143,7 @@ export class CodeLensElement extends HTMLElement {
   #render(): void {
     const cfg = this.#config!;
     const lens = this.#displayLens();
+    this.#lastRenderedLensIndex = null;
     this.#applyTheme(this.#themeId(), lens.id);
     this.#glassEnabled = shouldUseDomGlassLens();
     this.classList.toggle("el-glass-disabled", !this.#glassEnabled);
@@ -183,19 +224,35 @@ export class CodeLensElement extends HTMLElement {
     wrap.className = "el-code-wrap";
 
     const hint = document.createElement("p");
-    hint.className = "el-swipe-hint";
-    hint.textContent = "Swipe code to preview lenses";
-
-    const ghost = document.createElement("div");
-    ghost.className = "el-swipe-ghost";
+    hint.className = "el-touch-hint";
+    hint.textContent = this.#touchPreviewIsSwipe()
+      ? "Swipe code to preview lenses"
+      : "Tap lens tabs to switch — code is selectable";
 
     const pre = document.createElement("pre");
     pre.className = "el-code";
 
+    const codeGlass = document.createElement("div");
+    codeGlass.className = "el-code-glass";
+    codeGlass.setAttribute("aria-hidden", "true");
+    codeGlass.innerHTML = [
+      '<div class="el-code-glass-blur"></div>',
+      '<div class="el-code-glass-sheen el-code-glass-sheen--primary"></div>',
+      '<div class="el-code-glass-sheen el-code-glass-sheen--secondary"></div>',
+      '<div class="el-code-glass-sheen el-code-glass-sheen--tertiary"></div>',
+    ].join("");
+    this.#codeGlassEl = codeGlass;
+
     wrap.appendChild(hint);
-    wrap.appendChild(ghost);
     wrap.appendChild(pre);
-    this.#bindSwipe(wrap, ghost);
+    pre.appendChild(codeGlass);
+
+    if (this.#touchPreviewIsSwipe()) {
+      const ghost = document.createElement("div");
+      ghost.className = "el-swipe-ghost";
+      wrap.insertBefore(ghost, pre);
+      this.#bindSwipe(wrap, ghost);
+    }
 
     body.appendChild(sub);
     body.appendChild(desc);
@@ -203,8 +260,9 @@ export class CodeLensElement extends HTMLElement {
 
     const foot = document.createElement("p");
     foot.className = "el-foot";
-    foot.textContent =
-      "Hover tabs to preview · glass lens sweeps diff tokens line-by-line · click/tap to lock";
+    foot.textContent = this.#touchPreviewIsSwipe()
+      ? "Hover tabs to preview · swipe code on touch · glass sweeps on lens change"
+      : "Hover tabs to preview on desktop · tap tabs on touch · glass sweeps on lens change";
     body.appendChild(foot);
 
     root.appendChild(body);
@@ -257,10 +315,14 @@ export class CodeLensElement extends HTMLElement {
     const cfg = this.#config;
     const lensIdx = this.#displayIndex();
     const base = cfg.document.lenses[0].lines;
+    const lensChanged =
+      this.#lastRenderedLensIndex !== null && this.#lastRenderedLensIndex !== lensIdx;
 
     const probe = this.#textProbe;
+    const glass = this.#codeGlassEl;
     this.#codeEl.innerHTML = "";
     if (probe) this.#codeEl.appendChild(probe);
+    if (glass) this.#codeEl.appendChild(glass);
 
     base.forEach((line, lineIdx) => {
       const row = document.createElement("div");
@@ -279,6 +341,21 @@ export class CodeLensElement extends HTMLElement {
       });
       this.#codeEl!.appendChild(row);
     });
+
+    if (lensChanged) {
+      this.#playBlockGlass();
+    }
+    this.#lastRenderedLensIndex = lensIdx;
+  }
+
+  #playBlockGlass(): void {
+    const glass = this.#codeGlassEl;
+    if (!glass || !this.#glassEnabled) return;
+    const passMs = this.#config!.ui.animation.glassBlockPassMs;
+    glass.classList.remove("is-active");
+    void glass.offsetWidth;
+    glass.classList.add("is-active");
+    window.setTimeout(() => glass.classList.remove("is-active"), passMs + 80);
   }
 
   #renderMorphToken(
@@ -333,9 +410,6 @@ export class CodeLensElement extends HTMLElement {
     shell.appendChild(inner);
 
     const ui = this.#config!.ui.animation;
-    const staggerMs = ui.glassLensLineStaggerMs;
-    const passMs = ui.glassLensPassMs;
-    const lineDelay = lineIdx * staggerMs;
 
     const incomingW = this.#diffTokenWidth(state.incoming);
     const outgoingW = state.outgoing ? this.#diffTokenWidth(state.outgoing) : incomingW;
@@ -346,17 +420,7 @@ export class CodeLensElement extends HTMLElement {
 
     if (state.outgoing !== null) {
       shell.classList.add("is-morphing");
-      if (this.#glassEnabled) {
-        const glassLens = document.createElement("span");
-        glassLens.className = "el-diff-glass-lens";
-        glassLens.setAttribute("aria-hidden", "true");
-        glassLens.style.setProperty("--el-glass-lens-delay", `${lineDelay}ms`);
-        shell.appendChild(glassLens);
-      }
-      window.setTimeout(
-        () => shell.classList.remove("is-morphing"),
-        lineDelay + passMs + 80,
-      );
+      window.setTimeout(() => shell.classList.remove("is-morphing"), ui.widthMs + ui.fadeMs + 80);
     }
 
     const fromW = state.outgoing !== null ? (storedW ?? outgoingW) : incomingW;
@@ -400,12 +464,14 @@ export class CodeLensElement extends HTMLElement {
   #bindSwipe(wrap: HTMLElement, ghost: HTMLElement): void {
     const threshold = this.#config!.ui.interaction.touch.swipeThresholdPx;
     const lenses = this.#config!.document.lenses;
+    let touchStartX = 0;
+    let touchDragging = false;
 
     wrap.addEventListener(
       "touchstart",
       (e) => {
-        this.#touchStartX = e.touches[0].clientX;
-        this.#touchDragging = true;
+        touchStartX = e.touches[0].clientX;
+        touchDragging = true;
       },
       { passive: true },
     );
@@ -413,8 +479,8 @@ export class CodeLensElement extends HTMLElement {
     wrap.addEventListener(
       "touchmove",
       (e) => {
-        if (!this.#touchDragging) return;
-        const dx = e.touches[0].clientX - this.#touchStartX;
+        if (!touchDragging) return;
+        const dx = e.touches[0].clientX - touchStartX;
         if (Math.abs(dx) > 12) ghost.classList.add("visible");
         const next =
           dx < -threshold
@@ -423,7 +489,7 @@ export class CodeLensElement extends HTMLElement {
               ? Math.max(this.#displayIndex() - 1, 0)
               : null;
         if (next !== null && next !== this.#displayIndex()) {
-          this.#touchStartX = e.touches[0].clientX;
+          touchStartX = e.touches[0].clientX;
           this.#preview = next;
           const lens = lenses[next];
           this.#applyTheme(this.#themeId(), lens.id);
@@ -438,7 +504,7 @@ export class CodeLensElement extends HTMLElement {
     wrap.addEventListener(
       "touchend",
       () => {
-        this.#touchDragging = false;
+        touchDragging = false;
         ghost.classList.remove("visible");
         this.#committed = this.#displayIndex();
         this.#preview = null;
@@ -458,6 +524,7 @@ export function createCodeLens(config: CodeLensConfig, themeId?: string): CodeLe
   registerCodeLens();
   const el = document.createElement(TAG) as CodeLensElement;
   if (themeId) el.setAttribute("theme", themeId);
+  if (config.appearance) el.setAttribute("appearance", config.appearance);
   el.configure(config);
   return el;
 }

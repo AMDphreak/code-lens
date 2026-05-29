@@ -4,63 +4,57 @@ One snippet, multiple pedagogical naming conventions — the real lens for code 
 
 **Live demo:** [ryanjohnson.dev/code-lens](https://ryanjohnson.dev/code-lens/)
 
-## Why
+## Delivery model
 
-Technical authors pick one naming convention per example. Readers encounter four referential strategies without vocabulary to name them. **code-lens** keeps syntax fixed while identifiers rotate — with diff highlighting, per-lens panel colors, hover preview, touch swipe, and a literal glass lens sweep over morphing tokens.
+**In Solid/React/Next you install a component** — e.g. `import { CodeLens } from "@code-lens/solid"`. Under the hood one shared engine powers every framework package; you don’t touch that unless you’re on plain HTML.
 
-## Quick start (vanilla)
+| Layer | Package |
+|-------|---------|
+| Component (your import) | `@code-lens/solid`, `@code-lens/react`, … |
+| Skin | `@code-lens/css` or `@code-lens/tailwind` (planned) |
+| Engine | `@code-lens/vanilla` + `@code-lens/core` (pulled in automatically) |
+
+→ [docs/ecosystem.md](docs/ecosystem.md)
+
+## Quick start
 
 ```bash
 pnpm install
-pnpm dev          # SolidJS + solid-ui GitHub Pages demo (port 5174)
+pnpm dev          # SolidJS + solid-ui demo (port 5174) — mounts vanilla <code-lens>
 ```
 
-See [`demo/README.md`](demo/README.md) for the Pages site stack and build steps.
+```js
+import "@code-lens/css";
+import { createCodeLens, registerCodeLens } from "@code-lens/vanilla";
+import { parseLensBlock, parseThemes, parseUi } from "@code-lens/core";
+
+registerCodeLens();
+const el = createCodeLens({
+  document: parseLensBlock(blockJson5),
+  themes: parseThemes(themesJson5),
+  ui: parseUi(uiJson5),
+}, "earth");
+document.body.appendChild(el);
+```
 
 ```html
-<script type="module">
-  import { createCodeLens, registerCodeLens } from "@code-lens/vanilla";
-  import { parseLensBlock, parseThemes, parseUi } from "@code-lens/core";
-
-  registerCodeLens();
-  const el = createCodeLens({
-    document: parseLensBlock(blockJson5),
-    themes: parseThemes(themesJson5),
-    ui: parseUi(uiJson5),
-  }, "earth");
-  document.body.appendChild(el);
-</script>
+<code-lens theme="earth" appearance="auto"></code-lens>
 ```
 
-Or use the custom element after `registerCodeLens()`:
-
-```html
-<code-lens></code-lens>
-```
+`appearance`: `auto` | `light` | `dark` — independent of pedagogical color theme.
 
 ## Portable spec
 
 | File | Role |
 |------|------|
 | [`spec/examples/*.json5`](spec/examples/) | Aligned token data per lens |
-| [`spec/themes.json5`](spec/themes.json5) | Six color schemes, distinct panel per lens |
-| [`spec/ui.json5`](spec/ui.json5) | Interaction + animation (including glass lens stagger) |
+| [`spec/themes.json5`](spec/themes.json5) | Color schemes (light/dark per theme) |
+| [`spec/ui.json5`](spec/ui.json5) | Interaction + animation |
 
+- [Ecosystem / delivery model](docs/ecosystem.md)
 - [Full specification](docs/specification.md)
 - [Glass lens capabilities](docs/glass-lens-capabilities.md)
-- [Editor integrations — VS Code & Zed](docs/editor-integrations.md)
-- [AI / LLM reproduction spec](docs/ai-reproduction-spec.md)
-- [Implementation registry](implementations/REGISTRY.md) · [`spec/implementations.json5`](spec/implementations.json5)
-
-## Packages
-
-| Package | Status |
-|---------|--------|
-| `@code-lens/core` | Spec loader, themes, slot detection, blur probe |
-| `@code-lens/vanilla` | `<code-lens>` web component (shipped) |
-| `@code-lens/solid` | Solid wrapper (wip) — **used by GitHub Pages demo** |
-| `@code-lens/react`, `vue`, `svelte`, `angular`, `preact`, `lit` | Planned |
-| `@code-lens/react-native`, `@code-lens/flutter` | Planned (native glass lens) |
+- [Implementation registry](implementations/REGISTRY.md)
 
 ## License
 

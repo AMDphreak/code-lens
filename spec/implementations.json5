@@ -1,10 +1,8 @@
-// Canonical implementation registry — consumed by demo site and docs.
-// Glass lens: implement the full sweep wherever the runtime supports blur compositing;
-// use "fallback" only when probing fails. See docs/glass-lens-capabilities.md.
+// Canonical implementation registry — see docs/ecosystem.md
 
 {
   glassLensTiers: {
-    full: "DOM/CSS backdrop-filter — tab pill + diff-token lens sweep (normative reference)",
+    full: "DOM/CSS backdrop-filter — tab pill + block glass sweep (normative reference)",
     webview: "Full effect via embedded web component (Electron, Tauri, WebView2, Qt WebEngine, WebKitGTK)",
     native: "Platform blur API (SwiftUI Material, Compose blur, Flutter BackdropFilter, RN blur module)",
     fallback: "Width morph + cross-fade only — no blur compositing available",
@@ -13,32 +11,45 @@
   },
 
   implementations: [
-    // Editors
-    { platform: "Editors", name: "VS Code", pkg: "extensions/vscode", path: "extensions/vscode", status: "wip", glassLens: "webview", notes: "Full UI in webview panel; editor buffer uses decorations" },
-    { platform: "Editors", name: "Zed (LSP path)", pkg: "extensions/zed", path: "extensions/zed", status: "planned", glassLens: "none", notes: "Inlay hints + external preview until overlay APIs exist" },
-    { platform: "Editors", name: "code-lens LSP", pkg: "extensions/lsp", path: "extensions/lsp", status: "planned", glassLens: "fallback", notes: "Shared server for LSP-native editors" },
+    { platform: "Web", name: "CSS stylesheet", pkg: "@code-lens/css", path: "packages/css", status: "shipped", delivery: "css", glassLens: "full" },
+    { platform: "Web", name: "Tailwind stylesheet", pkg: "@code-lens/tailwind", path: "packages/tailwind", status: "planned", delivery: "tailwind", glassLens: "full" },
+    { platform: "Web", name: "Web component (runtime)", pkg: "@code-lens/vanilla", path: "packages/vanilla", status: "shipped", delivery: "runtime", glassLens: "full" },
+    { platform: "Web", name: "WASM bridge", pkg: "@code-lens/wasm-bridge", path: "packages/wasm-bridge", status: "shipped", delivery: "runtime", glassLens: "full", notes: "JS entry for Rust/D/OCaml WASM apps" },
 
-    // Web
-    { platform: "Web", name: "Vanilla JS (<code-lens>)", pkg: "@code-lens/vanilla", path: "packages/vanilla", status: "shipped", glassLens: "full" },
-    { platform: "Web", name: "SolidJS", pkg: "@code-lens/solid", path: "packages/solid", status: "wip", glassLens: "full", notes: "Wraps <code-lens>; probes backdrop-filter at runtime" },
-    { platform: "Web", name: "React", pkg: "@code-lens/react", path: "packages/react", status: "planned", glassLens: "full", notes: "Embed <code-lens> or port state machine" },
-    { platform: "Web", name: "Vue 3", pkg: "@code-lens/vue", path: "packages/vue", status: "planned", glassLens: "full" },
-    { platform: "Web", name: "Svelte", pkg: "@code-lens/svelte", path: "packages/svelte", status: "planned", glassLens: "full" },
-    { platform: "Web", name: "Angular", pkg: "@code-lens/angular", path: "packages/angular", status: "planned", glassLens: "full" },
-    { platform: "Web", name: "Preact", pkg: "@code-lens/preact", path: "packages/preact", status: "planned", glassLens: "full" },
-    { platform: "Web", name: "Lit", pkg: "@code-lens/lit", path: "packages/lit", status: "planned", glassLens: "full", notes: "Re-export or extend vanilla custom element" },
+    { platform: "Web", name: "SolidJS", pkg: "@code-lens/solid", path: "packages/solid", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "React", pkg: "@code-lens/react", path: "packages/react", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "Next.js", pkg: "@code-lens/next", path: "packages/next", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "Preact", pkg: "@code-lens/preact", path: "packages/preact", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "Vue 3", pkg: "@code-lens/vue", path: "packages/vue", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "Svelte", pkg: "@code-lens/svelte", path: "packages/svelte", status: "shipped", delivery: "adapter", glassLens: "full", notes: "use:codeLens action" },
+    { platform: "Web", name: "Angular", pkg: "@code-lens/angular", path: "packages/angular", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "Lit", pkg: "@code-lens/lit", path: "packages/lit", status: "shipped", delivery: "adapter", glassLens: "full" },
 
-    // Desktop
-    { platform: "Desktop", name: "Tauri + webview", pkg: "examples/tauri", path: "examples/tauri", status: "planned", glassLens: "webview" },
-    { platform: "Desktop", name: "Electron", pkg: "examples/electron", path: "examples/electron", status: "planned", glassLens: "webview" },
-    { platform: "Desktop", name: "Qt 6 / QML", pkg: "implementations/qt", path: "implementations/qt", status: "planned", glassLens: "native", notes: "WebEngine → webview tier; QML → FastBlur or shader sweep" },
-    { platform: "Desktop", name: "GTK 4", pkg: "implementations/gtk", path: "implementations/gtk", status: "planned", glassLens: "native", notes: "WebKitGTK → webview; GtkBlur or CSS in WebKit when available" },
-    { platform: "Desktop", name: ".NET MAUI", pkg: "implementations/maui", path: "implementations/maui", status: "planned", glassLens: "webview", notes: "BlazorWebView / WebView2 hosts vanilla component" },
+    { platform: "Web", name: "Jane Street Bonsai_web", pkg: "implementations/bonsai", path: "implementations/bonsai", status: "shipped", delivery: "adapter", glassLens: "full", notes: "OCaml js_of_ocaml — code_lens_mount.ml" },
 
-    // Mobile
-    { platform: "Mobile", name: "React Native", pkg: "@code-lens/react-native", path: "packages/react-native", status: "planned", glassLens: "native", notes: "expo-blur / native blur module for sweep; fallback cross-fade" },
-    { platform: "Mobile", name: "SwiftUI", pkg: "implementations/swiftui", path: "implementations/swiftui", status: "planned", glassLens: "native", notes: "Material + animated overlay on diff tokens" },
-    { platform: "Mobile", name: "Jetpack Compose", pkg: "implementations/compose", path: "implementations/compose", status: "planned", glassLens: "native", notes: "Modifier.blur + offset animation" },
-    { platform: "Mobile", name: "Flutter", pkg: "@code-lens/flutter", path: "packages/flutter", status: "planned", glassLens: "native", notes: "BackdropFilter + ClipRRect lens sweep" },
+    { platform: "Web", name: "Leptos", pkg: "code-lens-leptos", path: "packages/rust/leptos", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "Yew", pkg: "code-lens-yew", path: "packages/rust/yew", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "Dioxus", pkg: "code-lens-dioxus", path: "packages/rust/dioxus", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "Sycamore", pkg: "code-lens-sycamore", path: "packages/rust/sycamore", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "Dominator", pkg: "code-lens-dominator", path: "packages/rust/dominator", status: "shipped", delivery: "adapter", glassLens: "full" },
+    { platform: "Web", name: "Seed", pkg: "code-lens-seed", path: "packages/rust/seed", status: "shipped", delivery: "adapter", glassLens: "full" },
+
+    { platform: "Web", name: "D libwasm (browser)", pkg: "code-lens-d", path: "implementations/d", status: "shipped", delivery: "adapter", glassLens: "full", notes: "code_lens.libwasm + attachScript" },
+    { platform: "Desktop", name: "dlangui + webview", pkg: "code-lens-d", path: "implementations/d", status: "shipped", delivery: "adapter", glassLens: "webview", notes: "Native dlangui + companion webview panel — code_lens.dlangui" },
+
+    { platform: "Editors", name: "VS Code", pkg: "extensions/vscode", path: "extensions/vscode", status: "wip", delivery: "editor", glassLens: "webview" },
+    { platform: "Editors", name: "Zed (LSP path)", pkg: "extensions/zed", path: "extensions/zed", status: "planned", delivery: "editor", glassLens: "none" },
+    { platform: "Editors", name: "code-lens LSP", pkg: "extensions/lsp", path: "extensions/lsp", status: "planned", delivery: "editor", glassLens: "fallback" },
+
+    { platform: "Desktop", name: "Tauri + webview", pkg: "examples/tauri", path: "examples/tauri", status: "planned", delivery: "runtime", glassLens: "webview" },
+    { platform: "Desktop", name: "Electron", pkg: "examples/electron", path: "examples/electron", status: "planned", delivery: "runtime", glassLens: "webview" },
+    { platform: "Desktop", name: "Qt 6 / QML", pkg: "implementations/qt", path: "implementations/qt", status: "planned", delivery: "native", glassLens: "native" },
+    { platform: "Desktop", name: "GTK 4", pkg: "implementations/gtk", path: "implementations/gtk", status: "planned", delivery: "native", glassLens: "native" },
+    { platform: "Desktop", name: ".NET MAUI", pkg: "implementations/maui", path: "implementations/maui", status: "planned", delivery: "runtime", glassLens: "webview" },
+
+    { platform: "Mobile", name: "React Native", pkg: "@code-lens/react-native", path: "packages/react-native", status: "planned", delivery: "native", glassLens: "native" },
+    { platform: "Mobile", name: "SwiftUI", pkg: "implementations/swiftui", path: "implementations/swiftui", status: "planned", delivery: "native", glassLens: "native" },
+    { platform: "Mobile", name: "Jetpack Compose", pkg: "implementations/compose", path: "implementations/compose", status: "planned", delivery: "native", glassLens: "native" },
+    { platform: "Mobile", name: "Flutter", pkg: "@code-lens/flutter", path: "packages/flutter", status: "planned", delivery: "native", glassLens: "native" },
   ],
 }

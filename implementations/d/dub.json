@@ -1,0 +1,10 @@
+{
+  "name": "code-lens-d",
+  "description": "D adapters for code-lens — libwasm browser mount + dlangui webview companion",
+  "license": "MIT",
+  "authors": ["AMDphreak"],
+  "targetType": "library",
+  "sourcePaths": ["source"],
+  "importPaths": ["source"],
+  "copyright": "Copyright © 2026, AMDphreak"
+}

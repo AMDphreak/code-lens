@@ -1,12 +1,8 @@
-import { For, createSignal, onCleanup, onMount } from "solid-js";
+import { For } from "solid-js";
 import { Button } from "~/components/ui/button";
-import {
-  applyColorScheme,
-  getStoredColorScheme,
-  persistColorScheme,
-  type ColorSchemePreference,
-} from "~/lib/color-scheme";
+import { useColorScheme } from "~/lib/color-scheme-context";
 import { cn } from "~/lib/utils";
+import type { ColorSchemePreference } from "~/lib/color-scheme";
 
 const MODES: {
   value: ColorSchemePreference;
@@ -89,24 +85,7 @@ function ModeIcon(props: { mode: ColorSchemePreference; class?: string }) {
 }
 
 export function ColorSchemeToggle() {
-  const [preference, setPreference] = createSignal<ColorSchemePreference>("auto");
-
-  onMount(() => {
-    setPreference(getStoredColorScheme());
-
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onSystemChange = () => {
-      if (preference() === "auto") applyColorScheme("auto");
-    };
-    media.addEventListener("change", onSystemChange);
-    onCleanup(() => media.removeEventListener("change", onSystemChange));
-  });
-
-  const select = (mode: ColorSchemePreference) => {
-    setPreference(mode);
-    persistColorScheme(mode);
-    applyColorScheme(mode);
-  };
+  const colorScheme = useColorScheme();
 
   return (
     <div
@@ -122,12 +101,12 @@ export function ColorSchemeToggle() {
             size="icon"
             class={cn(
               "size-8 rounded-sm text-muted-foreground hover:text-foreground",
-              preference() === mode.value && "bg-background text-foreground shadow-sm",
+              colorScheme.preference() === mode.value && "bg-background text-foreground shadow-sm",
             )}
             title={mode.title}
             aria-label={mode.label}
-            aria-pressed={preference() === mode.value}
-            onClick={() => select(mode.value)}
+            aria-pressed={colorScheme.preference() === mode.value}
+            onClick={() => colorScheme.setPreference(mode.value)}
           >
             <ModeIcon mode={mode.value} class="size-4" />
           </Button>

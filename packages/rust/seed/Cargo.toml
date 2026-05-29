@@ -1,0 +1,10 @@
+[package]
+name = "code-lens-seed"
+description = "Seed component for code-lens"
+readme = "README.md"
+
+[dependencies]
+code-lens-adapter = { workspace = true }
+seed = { version = "0.9", default-features = false, features = ["std"] }
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true }

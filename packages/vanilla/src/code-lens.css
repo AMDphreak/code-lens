@@ -5,10 +5,14 @@ code-lens {
   --el-width-easing: cubic-bezier(0.16, 1, 0.3, 1);
   --el-fade-ms: 220ms;
   --el-glass-ms: 320ms;
-  --el-glass-lens-ms: 520ms;
-  --el-glass-lens-stagger: 55ms;
+  --el-glass-block-ms: 520ms;
   font-family: system-ui, sans-serif;
   color: var(--el-text, #2c2824);
+}
+
+:host(.el-appearance-dark),
+code-lens.el-appearance-dark {
+  color: var(--el-text, #e8e4de);
 }
 
 .el-root {
@@ -89,11 +93,9 @@ code-lens {
 
 .el-code-wrap {
   position: relative;
-  touch-action: pan-y;
-  user-select: none;
 }
 
-.el-swipe-hint {
+.el-touch-hint {
   display: none;
   font-family: ui-monospace, monospace;
   font-size: 9px;
@@ -104,13 +106,21 @@ code-lens {
 }
 
 @media (pointer: coarse) {
-  .el-swipe-hint {
+  .el-touch-hint {
     display: block;
+  }
+
+  .el-tab {
+    min-height: var(--el-tab-min-height, 28px);
+    padding: 6px 12px;
   }
 }
 
 .el-code {
+  position: relative;
+  z-index: 1;
   overflow-x: auto;
+  overflow-y: hidden;
   margin: 0;
   padding: 16px;
   border: 1px solid var(--el-border, #d4d0c8);
@@ -118,10 +128,13 @@ code-lens {
   font-family: var(--el-code-font, "Space Mono", monospace);
   font-size: 13px;
   line-height: 1.6;
+  isolation: isolate;
 }
 
 .el-line {
+  display: block;
   white-space: pre;
+  line-height: inherit;
 }
 
 .el-token-kind-keyword { color: var(--el-syntax-keyword); }
@@ -139,6 +152,7 @@ code-lens {
   position: relative;
   display: inline-block;
   vertical-align: baseline;
+  line-height: inherit;
   max-width: 100%;
   overflow: hidden;
   isolation: isolate;
@@ -149,15 +163,14 @@ code-lens {
 }
 
 .el-diff-inner {
-  position: relative;
-  z-index: 1;
-  display: block;
-  overflow: hidden;
+  display: inline;
+  vertical-align: baseline;
   padding: 0 2px;
 }
 
 .el-diff-text {
-  display: grid;
+  display: inline-grid;
+  vertical-align: baseline;
 }
 
 .el-diff-text > span {
@@ -166,63 +179,192 @@ code-lens {
   white-space: nowrap;
 }
 
-/* Literal glass lens — sweeps diff tokens during morph; stagger via --el-glass-lens-delay */
-.el-diff-glass-lens {
+/* Block-wide glass — diagonal gradient layers sweep across the code panel during lens morph */
+.el-code-glass {
   position: absolute;
+  inset: 0;
   z-index: 2;
-  top: -3px;
-  bottom: -3px;
-  left: 0;
-  width: 62%;
-  border-radius: 999px;
   pointer-events: none;
-  background: linear-gradient(
-    105deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.22) 28%,
-    rgba(255, 255, 255, 0.48) 50%,
-    rgba(255, 255, 255, 0.22) 72%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  backdrop-filter: blur(11px) saturate(1.35);
-  -webkit-backdrop-filter: blur(11px) saturate(1.35);
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  box-shadow:
-    inset 0 0 14px rgba(255, 255, 255, 0.35),
-    0 0 10px rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  border-radius: inherit;
   opacity: 0;
-  transform: translateX(-115%) scale(0.88);
+  mix-blend-mode: soft-light;
 }
 
-.el-diff.is-morphing .el-diff-glass-lens {
-  animation: diff-glass-lens-pass var(--el-glass-lens-ms) var(--el-width-easing) forwards;
-  animation-delay: var(--el-glass-lens-delay, 0ms);
+.el-code-glass.is-active {
+  animation: el-code-glass-fade var(--el-glass-block-ms) var(--el-width-easing) forwards;
 }
 
-@keyframes diff-glass-lens-pass {
+.el-code-glass-sheen {
+  position: absolute;
+  inset: -60%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.el-code-glass.is-active .el-code-glass-sheen--primary {
+  background: linear-gradient(
+    128deg,
+    transparent 28%,
+    rgba(255, 255, 255, 0.06) 38%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(255, 255, 255, 0.06) 62%,
+    transparent 72%
+  );
+  animation: el-code-glass-sweep-a var(--el-glass-block-ms) var(--el-width-easing) forwards;
+}
+
+.el-code-glass.is-active .el-code-glass-sheen--secondary {
+  background: linear-gradient(
+    -52deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.04) 42%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0.04) 58%,
+    transparent 68%
+  );
+  animation: el-code-glass-sweep-b var(--el-glass-block-ms) var(--el-width-easing) forwards;
+}
+
+.el-code-glass.is-active .el-code-glass-sheen--tertiary {
+  background: linear-gradient(
+    38deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.03) 46%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 56%
+  );
+  animation: el-code-glass-sweep-c var(--el-glass-block-ms) var(--el-width-easing) forwards;
+}
+
+.el-code-glass-blur {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(0px) saturate(1);
+  -webkit-backdrop-filter: blur(0px) saturate(1);
+  pointer-events: none;
+}
+
+.el-code-glass.is-active .el-code-glass-blur {
+  animation: el-code-glass-blur-pass var(--el-glass-block-ms) ease-out forwards;
+}
+
+@keyframes el-code-glass-fade {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes el-code-glass-sweep-a {
   0% {
     opacity: 0;
-    transform: translateX(-115%) scale(0.88);
+    transform: translate(-45%, -45%) rotate(-6deg);
   }
-  10% {
-    opacity: 0.95;
-  }
-  45% {
+  18% {
     opacity: 1;
-    transform: translateX(8%) scale(1.02);
-  }
-  75% {
-    opacity: 0.75;
   }
   100% {
     opacity: 0;
-    transform: translateX(115%) scale(0.92);
+    transform: translate(45%, 45%) rotate(6deg);
   }
 }
 
-:host(.el-glass-disabled) .el-diff-glass-lens,
+@keyframes el-code-glass-sweep-b {
+  0% {
+    opacity: 0;
+    transform: translate(40%, -35%) rotate(4deg);
+  }
+  22% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-40%, 35%) rotate(-4deg);
+  }
+}
+
+@keyframes el-code-glass-sweep-c {
+  0% {
+    opacity: 0;
+    transform: translate(-35%, 30%) scale(1.05);
+  }
+  30% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(35%, -30%) scale(1.05);
+  }
+}
+
+@keyframes el-code-glass-blur-pass {
+  0%, 100% {
+    backdrop-filter: blur(0px) saturate(1);
+    -webkit-backdrop-filter: blur(0px) saturate(1);
+  }
+  35%, 65% {
+    backdrop-filter: blur(5px) saturate(1.25);
+    -webkit-backdrop-filter: blur(5px) saturate(1.25);
+  }
+}
+
+:host(.el-appearance-dark) .el-code-glass-sheen--primary,
+code-lens.el-appearance-dark .el-code-glass-sheen--primary {
+  background: linear-gradient(
+    128deg,
+    transparent 28%,
+    rgba(255, 255, 255, 0.03) 38%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.03) 62%,
+    transparent 72%
+  );
+}
+
+:host(.el-appearance-dark) .el-code-glass-sheen--secondary,
+code-lens.el-appearance-dark .el-code-glass-sheen--secondary {
+  background: linear-gradient(
+    -52deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.02) 42%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.02) 58%,
+    transparent 68%
+  );
+}
+
+:host(.el-appearance-dark) .el-code-glass-sheen--tertiary,
+code-lens.el-appearance-dark .el-code-glass-sheen--tertiary {
+  background: linear-gradient(
+    38deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.02) 46%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 56%
+  );
+}
+
+:host(.el-appearance-dark) .el-glass,
+code-lens.el-appearance-dark .el-glass {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+:host(.el-appearance-dark) .el-tab,
+code-lens.el-appearance-dark .el-tab {
+  color: var(--el-text);
+}
+
+:host(.el-appearance-dark) .el-meta-desc,
+code-lens.el-appearance-dark .el-meta-desc {
+  opacity: 0.9;
+}
+
+:host(.el-glass-disabled) .el-code-glass,
 :host(.el-glass-disabled) .el-glass,
-code-lens.el-glass-disabled .el-diff-glass-lens,
+code-lens.el-glass-disabled .el-code-glass,
 code-lens.el-glass-disabled .el-glass {
   display: none;
 }
@@ -234,8 +376,11 @@ code-lens.el-glass-disabled .el-tab[aria-selected="true"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .el-diff-glass-lens {
-    display: none;
+  .el-code-glass.is-active,
+  .el-code-glass.is-active .el-code-glass-sheen,
+  .el-code-glass.is-active .el-code-glass-blur {
+    animation: none;
+    opacity: 0;
   }
   .el-diff {
     transition-duration: 0.01ms;
@@ -258,6 +403,7 @@ code-lens.el-glass-disabled .el-tab[aria-selected="true"] {
   opacity: 0;
   background: var(--el-panel-bg);
   transition: opacity 120ms ease;
+  z-index: 3;
 }
 
 .el-swipe-ghost.visible {
