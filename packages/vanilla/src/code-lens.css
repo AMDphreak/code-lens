@@ -156,19 +156,30 @@ code-lens.el-appearance-dark {
 }
 
 .el-slot-stack {
-  display: inline-grid;
+  display: inline-block;
   vertical-align: baseline;
   line-height: inherit;
-}
-
-.el-slot-stack > .el-slot-layer {
-  grid-area: 1 / 1;
-  white-space: pre;
 }
 
 .el-slot.is-morphing .el-slot-stack {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
+}
+
+/* Incoming text sets width; outgoing is overlaid for cross-fade only */
+.el-slot.is-morphing .el-slot-in {
+  white-space: pre;
+}
+
+.el-slot.is-morphing .el-slot-out {
+  position: absolute;
+  left: 0;
+  top: 0;
+  line-height: inherit;
+  white-space: pre;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .el-slot.is-morphing .el-slot-stack::after {

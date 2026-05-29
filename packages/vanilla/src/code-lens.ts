@@ -378,18 +378,18 @@ export class CodeLensElement extends HTMLElement {
     stack.className = "el-slot-stack";
 
     const outSpan = document.createElement("span");
-    outSpan.className = `el-slot-layer el-token-kind-${token.kind}`;
+    outSpan.className = `el-slot-out el-token-kind-${token.kind}`;
     outSpan.textContent = state.outgoing;
     outSpan.style.opacity = String(state.outOpacity);
     outSpan.style.transition = `opacity var(--el-fade-ms) ease-out`;
 
     const inSpan = document.createElement("span");
-    inSpan.className = `el-slot-layer el-token-kind-${token.kind}`;
+    inSpan.className = `el-slot-in el-token-kind-${token.kind}`;
     inSpan.textContent = state.incoming;
     inSpan.style.opacity = String(state.inOpacity);
     inSpan.style.transition = `opacity var(--el-fade-ms) ease-in ${ui.fadeDelayMs}ms`;
 
-    stack.append(outSpan, inSpan);
+    stack.append(inSpan, outSpan);
     shell.appendChild(stack);
 
     requestAnimationFrame(() => {

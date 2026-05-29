@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.7] - 2026-05-29
+
+### Fixed
+
+- **Slotted token width during morph** — stack width follows incoming (final) text; outgoing cross-fades in absolute overlay so grid max-width no longer leaves extra gap.
+
 ## [0.3.6] - 2026-05-29
 
 ### Changed
