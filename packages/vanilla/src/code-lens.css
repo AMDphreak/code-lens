@@ -132,10 +132,16 @@ code-lens.el-appearance-dark {
 }
 
 .el-line {
-  display: block;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: baseline;
   white-space: pre;
   line-height: inherit;
-  height: 1lh;
+}
+
+.el-line > * {
+  flex-shrink: 0;
 }
 
 .el-token-kind-keyword { color: var(--el-syntax-keyword); }
@@ -174,9 +180,9 @@ code-lens.el-appearance-dark {
 .el-diff-clip {
   display: inline-block;
   vertical-align: baseline;
-  line-height: inherit;
-  height: 1lh;
   width: auto;
+  line-height: inherit;
+  overflow: visible;
 }
 
 .el-diff-clip.is-morphing {
@@ -185,11 +191,16 @@ code-lens.el-appearance-dark {
   transition: width var(--el-width-ms) var(--el-width-easing);
 }
 
+/* In-flow sizing strut — keeps baseline stable for siblings during morph */
+.el-diff-clip.is-morphing .el-diff-sizing {
+  visibility: hidden;
+  white-space: nowrap;
+}
+
 .el-diff-clip.is-morphing .el-diff-layer {
   position: absolute;
   left: 0;
   top: 0;
-  height: 1lh;
   line-height: inherit;
   white-space: nowrap;
 }

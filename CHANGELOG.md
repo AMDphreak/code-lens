@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.5] - 2026-05-29
+
+### Fixed
+
+- **Plain token vertical shift during morph** — morph layers sit over an in-flow hidden sizing strut; clip stays `inline-block` (no display flip on settle); each code line uses flex `align-items: baseline` so siblings stay locked.
+
 ## [0.3.4] - 2026-05-29
 
 ### Fixed

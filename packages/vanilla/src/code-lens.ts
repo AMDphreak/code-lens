@@ -410,6 +410,11 @@ export class CodeLensElement extends HTMLElement {
 
     clip.classList.add("is-morphing");
 
+    const sizing = document.createElement("span");
+    sizing.className = `el-diff-sizing el-token-kind-${token.kind}`;
+    sizing.setAttribute("aria-hidden", "true");
+    sizing.textContent = state.outgoing;
+
     const outLayer = document.createElement("span");
     outLayer.className = "el-diff-layer";
     outLayer.style.opacity = String(state.outOpacity);
@@ -428,7 +433,7 @@ export class CodeLensElement extends HTMLElement {
     inSpan.textContent = state.incoming;
     inLayer.appendChild(inSpan);
 
-    clip.append(outLayer, inLayer);
+    clip.append(sizing, outLayer, inLayer);
     shell.appendChild(clip);
 
     const incomingW = this.#measureTextWidth(state.incoming, token.kind);
@@ -449,6 +454,9 @@ export class CodeLensElement extends HTMLElement {
       state!.outgoing = null;
       clip.classList.remove("is-morphing");
       clip.style.width = "";
+      inLayer.style.opacity = "";
+      inLayer.style.transition = "";
+      inLayer.style.position = "";
       clip.replaceChildren(inSpan.cloneNode(true));
     };
 
